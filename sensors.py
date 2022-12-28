@@ -198,7 +198,9 @@ class Wallbox(SensorBase):
         """ Overwrite exit method of base class to support Modbus closing
         """
         self.mb.close()
+        logger.info("in exit")
         super().exit()
+        logger.info("after exit")
 
 
 class SensorInterface(dict):
