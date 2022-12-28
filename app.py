@@ -17,7 +17,7 @@ if __name__ == "__main__":
     
     try:
         while True:
-            task = {"func": "capture", "callback": print}
+            task = {"func": "capture", "callback": logging.info}
             wb.task_queue.put_nowait(task)
             time.sleep(settings["update_interval"])
     
