@@ -163,6 +163,7 @@ class Wallbox(threading.Thread):
         }
     
     def __init__(self, auto_connect=True):
+        super().__init__()
         self.connected = False
         self.exiting = False
         self.task_queue = Queue(maxsize=10)
