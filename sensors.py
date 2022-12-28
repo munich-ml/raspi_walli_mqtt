@@ -136,13 +136,13 @@ class Wallbox(SensorBase):
 
 
     def capture(self):
+        # step 1: Read registers raw
         read_attempts = 0
         regs = []
         funcs = [lambda: self.mb.read_input_registers(4, count=15, unit=BUS_ID),
-                    lambda: self.mb.read_input_registers(100, count=2, unit=BUS_ID),
-                    lambda: self.mb.read_holding_registers(257, count=3, unit=BUS_ID),
-                    lambda: self.mb.read_holding_registers(261, count=2, unit=BUS_ID),
-                ]
+                 lambda: self.mb.read_input_registers(100, count=2, unit=BUS_ID),
+                 lambda: self.mb.read_holding_registers(257, count=3, unit=BUS_ID),
+                 lambda: self.mb.read_holding_registers(261, count=2, unit=BUS_ID)]
         for func in funcs:
             while True:
                 r = func()
@@ -157,7 +157,29 @@ class Wallbox(SensorBase):
         keys = ['ver', 'charge_state', 'I_L1', 'I_L2', 'I_L3', 'Temp', 'V_L1', 'V_L2', 
                 'V_L3', 'ext_lock', 'P', 'E_cyc_hb', 'E_cyc_lb', 'E_hb', 'E_lb', 'I_max', 'I_min', 
                 'watchdog', 'standby', 'remote_lock', 'max_I_cmd', 'FailSafe_I']
-        dct = {k: v for k, v in zip(keys, regs)}
+        raw = {k: v for k, v in zip(keys, regs)}
+        
+        # step 2: Preprocess registers
+        dct = {
+            "charging_state": int(raw["charge_state"]), 
+            "I_L1": raw["I_L1"] / 10.,
+            "I_L2": raw["I_L2"] / 10.,
+            "I_L3": raw["I_L3"] / 10.,
+            "temperature": raw["Temp"] / 10.,
+            "V_L1": int(raw["V_L1"]),
+            "V_L2": int(raw["V_L2"]),
+            "V_L3": int(raw["V_L3"]),
+            "extern_lock_state": int(raw["ext_lock"]),
+            "power_kW": raw["P"] / 1000.,
+            "energy_pwr_on": ((int(raw["E_cyc_hb"]) << 16) + raw["E_cyc_lb"]) / 1000.,
+            "energy_kWh": ((int(raw["E_hb"]) << 16) + raw["E_lb"]) / 1000.,
+            "I_max_cfg": int(raw["I_max"]),
+            "I_min_cfg": int(raw["I_max"]),
+            "modbus_watchdog_timeout": int(raw["watchdog"]),
+            "remote_lock": int(raw["remote_lock"]),
+            "I_max_cmd": raw["max_I_cmd"] / 10.,
+            "I_fail_safe": raw["FailSafe_I"] / 10., 
+        }
         return dct
         
         
