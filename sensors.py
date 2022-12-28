@@ -50,11 +50,11 @@ class SensorBase(threading.Thread):
         connected = {True: "connected", False: "not connected"}[self.connected]
         return f"{self.type}, {connected}"
         
-    def _connect(self):
+    def connect(self):
         """ connect function to be implemented in sensor subclass """
         raise NotImplementedError()
         
-    def _capture(self):
+    def capture(self):
         """ capture function to be implemented in sensor subclass """
         raise NotImplementedError()
     
@@ -62,18 +62,16 @@ class SensorBase(threading.Thread):
         self.exiting = True
     
     def run(self):
-        TASK_FUNCS = {"connect": self._connect,
-                      "capture": self._capture,
-                      "reg_read": self._reg_read,     # walli specific register read funciton
-                      "reg_write": self._reg_write,   # walli specific register write funciton
-                      "exit": self._exit}
-        
         logger.info(f"Sensor thread started for '{self.type}'")
         while not self.exiting:
             time.sleep(0.01)    # don't go crazy timer
             while not self.task_queue.empty():
-                task = self.task_queue.get()
-                func = TASK_FUNCS[task["func"]]
+                try:
+                    task = self.task_queue.get()
+                except Exception as e:
+                    logger.error(f"task {task} caused {e}")
+                    
+                func = getattr(self, task["func"])
                 if "kwargs" in task.keys():
                     kwargs = task["kwargs"]
                 else:
@@ -86,10 +84,11 @@ class SensorBase(threading.Thread):
                     task["callback"]({"rc": f"Exception during {task}"})
                     continue
                 
-                try: 
-                    task["callback"](return_dct)
-                except Exception as e:
-                    logger.error(e)
+                if "callback" in task:
+                    try: 
+                        task["callback"](return_dct)
+                    except Exception as e:
+                        logger.error(e)
                     
         logger.info(f"Sensor thread exiting for '{self.type}'")
 
@@ -101,13 +100,13 @@ class LightSensor(SensorBase):
         self.type = "LightSensor BH1570"
         super().__init__(*args, **kwargs)
         
-    def _connect(self):
+    def connect(self):
         if not LIGHT_SENSOR_SIMULATED:
             self.sensor = SMBus(1)  # Rev 2 Pi uses 1
         self.connected = True
         logger.debug(f"{self.type} connected")
         
-    def _capture(self):
+    def capture(self):
         """ Returns light level in Lux
         """
         if LIGHT_SENSOR_SIMULATED:
@@ -127,7 +126,6 @@ class LightSensor(SensorBase):
 class ModbusReadError(Exception):
     pass
 
-
 class Wallbox(SensorBase):
     """ Heidelberg Wallbox Energy Control
     """
@@ -135,7 +133,7 @@ class Wallbox(SensorBase):
         self.type = "Heidelberg Wallbox Energy Control"
         super().__init__(*args, **kwargs)
         
-    def _connect(self, ):
+    def connect(self, ):
         if WALLI_SIMULATED:
             self.writeable_regs = {
                 'watchdog': 10000,
@@ -159,7 +157,7 @@ class Wallbox(SensorBase):
         self.connected = True
         logger.debug(f"{self.type} connected")
 
-    def _capture(self):
+    def capture(self):
         if WALLI_SIMULATED:  # simulated Wallbox
             voltage = random.randint(200, 210)     # 200..210V, easy to distinguish from real voltage samples
             charge_state = random.choice([2, 7])   # 2=idle, 7=charging
