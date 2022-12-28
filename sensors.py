@@ -240,6 +240,7 @@ class Wallbox(SensorBase):
     def __init__(self, *args, **kwargs):
         self.type = "Heidelberg Wallbox Energy Control"
         super().__init__(*args, **kwargs)
+        self.connect()
         
     def connect(self, ): 
         self.mb = ModbusSerialClient(method="rtu",
