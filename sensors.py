@@ -32,87 +32,12 @@ def create_logger(fn='logging.txt', level_file_logger=logging.INFO, level_stream
 
 logger = create_logger()
 
-class SensorBase(threading.Thread):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.connected = False
-        self.exiting = False
-        self.task_queue = Queue(maxsize=10)
-        self.start()
-        
-    def __repr__(self):
-        connected = {True: "connected", False: "not connected"}[self.connected]
-        return f"{self.type}, {connected}"
-        
-    def connect(self):
-        """ connect function to be implemented in sensor subclass """
-        raise NotImplementedError()
-        
-    def capture(self):
-        """ capture function to be implemented in sensor subclass """
-        raise NotImplementedError()
-    
-    def exit(self):
-        self.exiting = True
-    
-    def run(self):
-        logger.info(f"Sensor thread started for '{self.type}'")
-        while not self.exiting:
-            time.sleep(0.01)    # don't go crazy timer
-            while not self.task_queue.empty():
-                try:
-                    task = self.task_queue.get()
-                except Exception as e:
-                    logger.error(f"task {task} caused {e}")
-                    
-                func = getattr(self, task["func"])
-                if "kwargs" in task.keys():
-                    kwargs = task["kwargs"]
-                else:
-                    kwargs = {}
-                
-                try:
-                    return_dct = func(**kwargs)
-                except Exception as e:
-                    logger.error(f"task {task} caused '{e}'")
-                    task["callback"]({"rc": f"Exception during {task}"})
-                    continue
-                
-                if "callback" in task:
-                    try: 
-                        task["callback"](return_dct)
-                    except Exception as e:
-                        logger.error(e)
-                    
-        logger.info(f"Sensor thread exiting for '{self.type}'")
-
-
-class LightSensor(SensorBase):
-    """ BH1750 digital light sensor 
-    """ 
-    def __init__(self, *args, **kwargs):
-        self.type = "LightSensor BH1570"
-        super().__init__(*args, **kwargs)
-        
-    def connect(self):
-        self.sensor = SMBus(1)  # Rev 2 Pi uses 1
-        self.connected = True
-        logger.debug(f"{self.type} connected")
-        
-    def capture(self):
-        """ Returns light level in Lux
-        """
-        I2C_BH1750 = 0x23
-        ONE_TIME_HIGH_RES_MODE_1 = 0x20  
-        d = self.sensor.read_i2c_block_data(I2C_BH1750, ONE_TIME_HIGH_RES_MODE_1)
-        lux = (d[1] + (256 * d[0])) / 1.2
-        return {"lux": lux}
 
 
 class ModbusReadError(Exception):
     pass
 
-class Wallbox(SensorBase):
+class Wallbox(threading.Thread):
     """ Heidelberg Wallbox Energy Control
     """
     SENSORX = {
@@ -237,10 +162,46 @@ class Wallbox(SensorBase):
                 'icon': 'mdi:sine-wave'}, 
         }
     
-    def __init__(self, *args, **kwargs):
-        self.type = "Heidelberg Wallbox Energy Control"
-        super().__init__(*args, **kwargs)
-        self.connect()
+    def __init__(self, auto_connect=True):
+        self.connected = False
+        self.exiting = False
+        self.task_queue = Queue(maxsize=10)
+        self.start()     
+        if auto_connect:
+            self.task_queue.put_nowait({"func": "connect"})   
+
+
+    def run(self):
+        logger.info(f"Sensor thread started for '{self.type}'")
+        while not self.exiting:
+            time.sleep(0.01)    # don't go crazy timer
+            while not self.task_queue.empty():
+                try:
+                    task = self.task_queue.get()
+                except Exception as e:
+                    logger.error(f"task {task} caused {e}")
+                    
+                func = getattr(self, task["func"])
+                if "kwargs" in task.keys():
+                    kwargs = task["kwargs"]
+                else:
+                    kwargs = {}
+                
+                try:
+                    return_dct = func(**kwargs)
+                except Exception as e:
+                    logger.error(f"task {task} caused '{e}'")
+                    task["callback"]({"rc": f"Exception during {task}"})
+                    continue
+                
+                if "callback" in task:
+                    try: 
+                        task["callback"](return_dct)
+                    except Exception as e:
+                        logger.error(e)
+                    
+        logger.info(f"Sensor thread exiting for '{self.type}'")
+        
         
     def connect(self, ): 
         self.mb = ModbusSerialClient(method="rtu",
@@ -340,42 +301,5 @@ class Wallbox(SensorBase):
     
 
     def exit(self):
-        """ Overwrite exit method of base class to support Modbus closing
-        """
         self.mb.close()
-        super().exit()
-
-
-class SensorInterface(dict):
-    """Container holding all sensors"""
-    def __init__(self):
-        self["light"] = LightSensor()
-        self["walli"] = Wallbox()
-        
-        # connect all sensors
-        for sensor in self.values():
-            sensor.task_queue.put({"func": "connect"})
-        
-        time.sleep(0.1)
-        logger.info("SensorInterface initialized")
-        for key, value in self.items():
-            logger.info(f"- '{key}': {value}")
-        
-    def do_task(self, task):
-        """
-        Executes a task 
-        
-        task is a <dict> with the items:
-            "sensor": <str> sensor key like "light", "walli" or "cam"
-            "func": <str> function key like "capture", "connect" or "exit"
-            "callback": <func> callback function line process_return_data
-        """
-        sensor = self[task["sensor"]]
-        if sensor.task_queue.full():
-            logger.warning(f"Queue is full! Skipping {task}")
-        else:    
-            sensor.task_queue.put(task, timeout=1)
-        
-    def exit(self):
-        for sensor in self.values():
-            sensor.exit()
+        self.exiting = True
