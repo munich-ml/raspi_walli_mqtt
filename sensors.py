@@ -58,7 +58,7 @@ class SensorBase(threading.Thread):
         """ capture function to be implemented in sensor subclass """
         raise NotImplementedError()
     
-    def _exit(self):
+    def exit(self):
         self.exiting = True
     
     def run(self):
@@ -238,12 +238,12 @@ class Wallbox(SensorBase):
         return {}
     
 
-    def _exit(self):
-        """ Overwrite _exit method of base class to support Modbus closing
+    def exit(self):
+        """ Overwrite exit method of base class to support Modbus closing
         """
         if not WALLI_SIMULATED:
             self.mb.close()
-        super()._exit()
+        super().exit()
       
 
 class Camera(SensorBase):
