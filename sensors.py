@@ -1,19 +1,13 @@
 import logging, random, threading, time
-import time
 import datetime as dt
+from pymodbus.client.sync import ModbusSerialClient
+from smbus import SMBus
 from queue import Queue
 
-LIGHT_SENSOR_SIMULATED = False      # True for debugging mode if no sensor is connected
-WALLI_SIMULATED = False             # True for debugging mode if no sensor is connected
 PORT = '/dev/ttyAMA0'              # Serial port of Modbus interface
 BUS_ID = 1                         # Modbus ID
 MAX_READ_ATTEMPTS = 8              # Max number of attempts for a Modbus read
 
-if not WALLI_SIMULATED:
-    from pymodbus.client.sync import ModbusSerialClient
-
-if not LIGHT_SENSOR_SIMULATED:
-    from smbus import SMBus
 
 # configure logging
 def create_logger(fn='logging.txt', level_file_logger=logging.INFO, level_stream_logger=logging.INFO):
@@ -101,26 +95,18 @@ class LightSensor(SensorBase):
         super().__init__(*args, **kwargs)
         
     def connect(self):
-        if not LIGHT_SENSOR_SIMULATED:
-            self.sensor = SMBus(1)  # Rev 2 Pi uses 1
+        self.sensor = SMBus(1)  # Rev 2 Pi uses 1
         self.connected = True
         logger.debug(f"{self.type} connected")
         
     def capture(self):
         """ Returns light level in Lux
         """
-        if LIGHT_SENSOR_SIMULATED:
-            time.sleep(0.01)
-            t = dt.datetime.now() 
-            lux = float(t.hour + t.minute/100)   
-            return {"lux": lux}
-        
-        else:
-            I2C_BH1750 = 0x23
-            ONE_TIME_HIGH_RES_MODE_1 = 0x20  
-            d = self.sensor.read_i2c_block_data(I2C_BH1750, ONE_TIME_HIGH_RES_MODE_1)
-            lux = (d[1] + (256 * d[0])) / 1.2
-            return {"lux": lux}
+        I2C_BH1750 = 0x23
+        ONE_TIME_HIGH_RES_MODE_1 = 0x20  
+        d = self.sensor.read_i2c_block_data(I2C_BH1750, ONE_TIME_HIGH_RES_MODE_1)
+        lux = (d[1] + (256 * d[0])) / 1.2
+        return {"lux": lux}
 
 
 class ModbusReadError(Exception):
@@ -133,76 +119,46 @@ class Wallbox(SensorBase):
         self.type = "Heidelberg Wallbox Energy Control"
         super().__init__(*args, **kwargs)
         
-    def connect(self, ):
-        if WALLI_SIMULATED:
-            self.writeable_regs = {
-                'watchdog': 10000,
-                'standby': 4,
-                'remote_lock': 1,
-                'max_I_cmd': 100,
-                'FailSafe_I': 100}
-        
-        else:
-            self.mb = ModbusSerialClient(method="rtu",
-                                         port=PORT,
-                                         baudrate=19200,
-                                         stopbits=1,
-                                         bytesize=8,
-                                         parity="E",
-                                         timeout=10)
+    def connect(self, ): 
+        self.mb = ModbusSerialClient(method="rtu",
+                                        port=PORT,
+                                        baudrate=19200,
+                                        stopbits=1,
+                                        bytesize=8,
+                                        parity="E",
+                                        timeout=10)
 
-            if not self.mb.connect():
-                raise ModbusReadError('Could not connect to the wallbox')       
+        if not self.mb.connect():
+            raise ModbusReadError('Could not connect to the wallbox')       
              
         self.connected = True
         logger.debug(f"{self.type} connected")
 
+
     def capture(self):
-        if WALLI_SIMULATED:  # simulated Wallbox
-            voltage = random.randint(200, 210)     # 200..210V, easy to distinguish from real voltage samples
-            charge_state = random.choice([2, 7])   # 2=idle, 7=charging
-            power = 0
-            if charge_state == 7:
-                power = 10000
-            current = int(power / voltage / 3 * 10)   
-            sim = {'datetime': dt.datetime.now(),
-                'ver': 99,
-                'charge_state': charge_state,
-                'I_L1': current, 'I_L2': current, 'I_L3': current,
-                'Temp': random.randint(200, 400),  # 20..40°C
-                'V_L1': voltage, 'V_L2': voltage, 'V_L3': voltage,
-                'ext_lock': 1,
-                'P': power,
-                'E_cyc_hb': 0, 'E_cyc_lb': 40000,
-                'E_hb': 3, 'E_lb': 0,
-                'I_max': 10, 'I_min': 7}
-            sim.update(self.writeable_regs)
-            return sim
+        read_attempts = 0
+        regs = []
+        funcs = [lambda: self.mb.read_input_registers(4, count=15, unit=BUS_ID),
+                    lambda: self.mb.read_input_registers(100, count=2, unit=BUS_ID),
+                    lambda: self.mb.read_holding_registers(257, count=3, unit=BUS_ID),
+                    lambda: self.mb.read_holding_registers(261, count=2, unit=BUS_ID),
+                ]
+        for func in funcs:
+            while True:
+                r = func()
+                if r.isError():
+                    read_attempts += 1
+                    if read_attempts > MAX_READ_ATTEMPTS:
+                        raise ModbusReadError
+                else:
+                    regs.extend(r.registers)
+                    break
         
-        else:  # Real Wallbox (not simulated)
-            read_attempts = 0
-            regs = []
-            funcs = [lambda: self.mb.read_input_registers(4, count=15, unit=BUS_ID),
-                     lambda: self.mb.read_input_registers(100, count=2, unit=BUS_ID),
-                     lambda: self.mb.read_holding_registers(257, count=3, unit=BUS_ID),
-                     lambda: self.mb.read_holding_registers(261, count=2, unit=BUS_ID),
-                    ]
-            for func in funcs:
-                while True:
-                    r = func()
-                    if r.isError():
-                        read_attempts += 1
-                        if read_attempts > MAX_READ_ATTEMPTS:
-                            raise ModbusReadError
-                    else:
-                        regs.extend(r.registers)
-                        break
-            
-            keys = ['ver', 'charge_state', 'I_L1', 'I_L2', 'I_L3', 'Temp', 'V_L1', 'V_L2', 
-                    'V_L3', 'ext_lock', 'P', 'E_cyc_hb', 'E_cyc_lb', 'E_hb', 'E_lb', 'I_max', 'I_min', 
-                    'watchdog', 'standby', 'remote_lock', 'max_I_cmd', 'FailSafe_I']
-            dct = {k: v for k, v in zip(keys, regs)}
-            return dct
+        keys = ['ver', 'charge_state', 'I_L1', 'I_L2', 'I_L3', 'Temp', 'V_L1', 'V_L2', 
+                'V_L3', 'ext_lock', 'P', 'E_cyc_hb', 'E_cyc_lb', 'E_hb', 'E_lb', 'I_max', 'I_min', 
+                'watchdog', 'standby', 'remote_lock', 'max_I_cmd', 'FailSafe_I']
+        dct = {k: v for k, v in zip(keys, regs)}
+        return dct
         
         
     def _reg_read(self, input_regs: list, holding_regs: list) -> dict[str, list[tuple[str, int]]]:
@@ -241,15 +197,8 @@ class Wallbox(SensorBase):
     def exit(self):
         """ Overwrite exit method of base class to support Modbus closing
         """
-        if not WALLI_SIMULATED:
-            self.mb.close()
+        self.mb.close()
         super().exit()
-      
-
-class Camera(SensorBase):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.type = "Camera"
 
 
 class SensorInterface(dict):
@@ -283,19 +232,3 @@ class SensorInterface(dict):
         else:    
             sensor.task_queue.put(task, timeout=1)
         
-    
-if __name__ == '__main__':
-    def process_return_data(data):
-        print(f"process_return_data: {data}")
-
-    sensor = Wallbox()
-    sensor.task_queue.put({"func": "connect"})
-    for i in range(6):
-        task = {"func": "capture",
-                "campaign_id": 42, 
-                "callback": process_return_data}
-        sensor.task_queue.put(task)
-        time.sleep(1)
-    sensor.task_queue.put({"func": "exit"})
-    sensor.join()
-    print("finished")
