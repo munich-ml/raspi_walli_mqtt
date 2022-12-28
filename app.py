@@ -1,4 +1,4 @@
-import time, yaml
+import logging, time, yaml
 from wallbox import Wallbox
 
 SETTINGS = 'settings.yaml'
@@ -11,7 +11,13 @@ if __name__ == "__main__":
                  bus_id=settings["modbus"]["BUS_ID"],
                  max_read_attempts=settings["modbus"]["MAX_READ_ATTEMPTS"])
     
-    task = {"func": "capture", "callback": print}
-    wb.task_queue.put_nowait(task)
-    time.sleep(1)
+    try:
+        while True:
+            task = {"func": "capture", "callback": print}
+            wb.task_queue.put_nowait(task)
+            time.sleep(settings["update_interval"])
+    
+    except KeyboardInterrupt as e:
+        logging.info(e)
+        
     wb.exit()
