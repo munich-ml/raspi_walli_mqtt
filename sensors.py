@@ -173,7 +173,7 @@ class Wallbox(threading.Thread):
 
 
     def run(self):
-        logger.info(f"Sensor thread started for '{self.type}'")
+        logger.info("Wallbox modbus thread started'")
         while not self.exiting:
             time.sleep(0.01)    # don't go crazy timer
             while not self.task_queue.empty():
@@ -201,7 +201,7 @@ class Wallbox(threading.Thread):
                     except Exception as e:
                         logger.error(e)
                     
-        logger.info(f"Sensor thread exiting for '{self.type}'")
+        logger.info("Wallbox thread ist exiting")
         
         
     def connect(self, ): 
@@ -217,7 +217,7 @@ class Wallbox(threading.Thread):
             raise ModbusReadError('Could not connect to the wallbox')       
              
         self.connected = True
-        logger.debug(f"{self.type} connected")
+        logger.debug(f"Modbus connected")
 
 
     def capture(self):
