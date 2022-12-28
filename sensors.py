@@ -198,9 +198,7 @@ class Wallbox(SensorBase):
         """ Overwrite exit method of base class to support Modbus closing
         """
         self.mb.close()
-        logger.info("in exit")
         super().exit()
-        logger.info("after exit")
 
 
 class SensorInterface(dict):
@@ -213,6 +211,7 @@ class SensorInterface(dict):
         for sensor in self.values():
             sensor.task_queue.put({"func": "connect"})
         
+        time.sleep(0.1)
         logger.info("SensorInterface initialized")
         for key, value in self.items():
             logger.info(f"- '{key}': {value}")
@@ -224,13 +223,14 @@ class SensorInterface(dict):
         task is a <dict> with the items:
             "sensor": <str> sensor key like "light", "walli" or "cam"
             "func": <str> function key like "capture", "connect" or "exit"
-            "campaign_id": <int> e.g. 42
             "callback": <func> callback function line process_return_data
         """
-        sensor_key = task["sensor"]
-        sensor = self[sensor_key]
+        sensor = self[task["sensor"]]
         if sensor.task_queue.full():
             logger.warning(f"Queue is full! Skipping {task}")
         else:    
             sensor.task_queue.put(task, timeout=1)
         
+    def exit(self):
+        for sensor in self.values():
+            sensor.exit()

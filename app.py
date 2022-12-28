@@ -89,4 +89,5 @@ if __name__ == "__main__":
                 "callback": print}
         sensor_interface.do_task(task)
         time.sleep(5)
-    sensor_interface.do_task({"sensor": "walli", "func": "exit"})
+    
+    sensor_interface.exit()
