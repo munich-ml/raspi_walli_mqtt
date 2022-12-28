@@ -70,31 +70,26 @@ class SensorBase(threading.Thread):
         
         logger.info(f"Sensor thread started for '{self.type}'")
         while not self.exiting:
-            time.sleep(0.01)    # without this sleep, the processor goes busy
+            time.sleep(0.01)    # don't go crazy timer
             while not self.task_queue.empty():
-                start_time = time.time()
                 task = self.task_queue.get()
                 func = TASK_FUNCS[task["func"]]
                 if "kwargs" in task.keys():
                     kwargs = task["kwargs"]
                 else:
                     kwargs = {}
-                    
+                
                 try:
                     return_dct = func(**kwargs)
                 except Exception as e:
                     logger.error(f"task {task} caused {e}")
+                    task["callback"]({"rc": f"Exception during {task}"})
                     continue
                 
-                if "callback" in task.keys():
-                    return_dct["exec time"] = time.time() - start_time
-                    if "campaign_id" in task:
-                        return_dct["campaign_id"] = task["campaign_id"]
-                          
-                    try: 
-                        task["callback"](return_dct)
-                    except Exception as e:
-                        logger.error(e)
+                try: 
+                    task["callback"](return_dct)
+                except Exception as e:
+                    logger.error(e)
                     
         logger.info(f"Sensor thread exiting for '{self.type}'")
 
@@ -188,8 +183,7 @@ class Wallbox(SensorBase):
         
         else:  # Real Wallbox (not simulated)
             read_attempts = 0
-            regs = [dt.datetime.now()]
-
+            regs = []
             funcs = [lambda: self.mb.read_input_registers(4, count=15, unit=BUS_ID),
                      lambda: self.mb.read_input_registers(100, count=2, unit=BUS_ID),
                      lambda: self.mb.read_holding_registers(257, count=3, unit=BUS_ID),
@@ -206,7 +200,7 @@ class Wallbox(SensorBase):
                         regs.extend(r.registers)
                         break
             
-            keys = ['datetime', 'ver', 'charge_state', 'I_L1', 'I_L2', 'I_L3', 'Temp', 'V_L1', 'V_L2', 
+            keys = ['ver', 'charge_state', 'I_L1', 'I_L2', 'I_L3', 'Temp', 'V_L1', 'V_L2', 
                     'V_L3', 'ext_lock', 'P', 'E_cyc_hb', 'E_cyc_lb', 'E_hb', 'E_lb', 'I_max', 'I_min', 
                     'watchdog', 'standby', 'remote_lock', 'max_I_cmd', 'FailSafe_I']
             dct = {k: v for k, v in zip(keys, regs)}
