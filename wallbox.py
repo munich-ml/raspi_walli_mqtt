@@ -40,7 +40,7 @@ class ModbusReadError(Exception):
 class Wallbox(threading.Thread):
     """ Heidelberg Wallbox Energy Control
     """
-    SENSORX = {
+    SIGNALS = {
             "charging_state": 
                 {'name': 'charging state',
                 'state_class': 'measurement',
