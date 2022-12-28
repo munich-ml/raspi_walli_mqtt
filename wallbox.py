@@ -1,33 +1,7 @@
-import logging, random, threading, time
-import datetime as dt
+import logging, threading, time
 from pymodbus.client.sync import ModbusSerialClient
 from smbus import SMBus
 from queue import Queue
-
-
-# configure logging
-def create_logger(fn='logging.txt', level_file_logger=logging.INFO, level_stream_logger=logging.INFO):
-    logger = logging.getLogger()
-    logger.setLevel(logging.NOTSET)
-
-    # create file handler and stream handler
-    handlers = [{"handler": lambda: logging.FileHandler(fn), 
-                 "level": level_file_logger,
-                 "formatter": logging.Formatter('%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s thread=%(thread)s | %(message)s')},
-                {"handler": logging.StreamHandler, 
-                 "level": level_stream_logger,
-                 "formatter": logging.Formatter('%(levelname)-8s | %(message)s')},            
-               ]
-    for h in handlers:
-        handler = h["handler"]()
-        handler.setLevel(h["level"])
-        handler.setFormatter(h["formatter"])
-        logger.addHandler(handler)
-  
-    return logger
-
-logger = create_logger()
-
 
 
 class ModbusReadError(Exception):
@@ -172,14 +146,14 @@ class Wallbox(threading.Thread):
 
 
     def run(self):
-        logger.info("Wallbox modbus thread started'")
+        logging.info("Wallbox modbus thread started'")
         while not self.exiting:
             time.sleep(0.01)    # don't go crazy timer
             while not self.task_queue.empty():
                 try:
                     task = self.task_queue.get()
                 except Exception as e:
-                    logger.error(f"task {task} caused {e}")
+                    logging.error(f"task {task} caused {e}")
                     
                 func = getattr(self, task["func"])
                 if "kwargs" in task.keys():
@@ -190,7 +164,7 @@ class Wallbox(threading.Thread):
                 try:
                     return_dct = func(**kwargs)
                 except Exception as e:
-                    logger.error(f"task {task} caused '{e}'")
+                    logging.error(f"task {task} caused '{e}'")
                     task["callback"]({"rc": f"Exception during {task}"})
                     continue
                 
@@ -198,9 +172,9 @@ class Wallbox(threading.Thread):
                     try: 
                         task["callback"](return_dct)
                     except Exception as e:
-                        logger.error(e)
+                        logging.error(e)
                     
-        logger.info("Wallbox thread ist exiting")
+        logging.info("Wallbox thread ist exiting")
         
         
     def connect(self, ): 
@@ -216,7 +190,7 @@ class Wallbox(threading.Thread):
             raise ModbusReadError('Could not connect to the wallbox')       
              
         self.connected = True
-        logger.debug(f"Modbus connected")
+        logging.debug(f"Modbus connected")
 
 
     def capture(self):
