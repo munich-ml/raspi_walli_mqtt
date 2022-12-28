@@ -71,13 +71,13 @@ class SensorBase(threading.Thread):
                 else:
                     kwargs = {}
                 
-                return_dct = func(**kwargs)
-                #try:
-                #    return_dct = func(**kwargs)
-                #except Exception as e:
-                #    logger.error(f"task {task} caused {e}")
-                #    task["callback"]({"rc": f"Exception during {task}"})
-                #    continue
+                #return_dct = func(**kwargs)
+                try:
+                    return_dct = func(**kwargs)
+                except Exception as e:
+                    logger.error(f"task {task} caused '{e}'")
+                    task["callback"]({"rc": f"Exception during {task}"})
+                    continue
                 
                 if "callback" in task:
                     try: 
