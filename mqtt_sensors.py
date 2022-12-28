@@ -143,10 +143,12 @@ if __name__ == '__main__':
     mqttClient.on_connect = on_connect                      #attach function to callback
     mqttClient.on_message = on_message
     mqttClient.will_set(f'homeassistant/sensor/{devicename}/availability', 'offline', retain=True)
-    if 'user' in settings['mqtt']:
-        mqttClient.username_pw_set(
-            settings['mqtt']['user'], settings['mqtt']['password']
-        )
+    
+    print("warning: secrets")
+    with open('secrets.yaml', 'r') as f:
+        mqtt_auth = yaml.safe_load(f)['mqtt_auth']
+        mqttClient.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
+        del mqtt_auth
 
 
     while True:
