@@ -83,9 +83,10 @@ from sensors import SensorInterface, create_logger
 
 if __name__ == "__main__":    
     sensor_interface = SensorInterface()
-    for campaign_id in range(10):     
-        task = {"func": "capture", 
-                "sensor": "walli",
+    for campaign_id in range(3):     
+        task = {"sensor": "walli", 
+                "func": "capture", 
                 "callback": print}
         sensor_interface.do_task(task)
         time.sleep(5)
+    sensor_interface.do_task({"sensor": "walli", "func": "exit"})
