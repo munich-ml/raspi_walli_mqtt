@@ -4,4 +4,8 @@ mqtt:
 deviceName: walli7
 client_id: some_other_client
 timezone: Europe/Brussels
-update_interval: 60       # Defaults to 60
+update_interval: 60        # Sensor update interval in seconds, e.g. 60
+modbus:
+  PORT: '/dev/ttyAMA0'     # Serial port of Modbus interface
+  BUS_ID: 1                # Modbus ID
+  MAX_READ_ATTEMPTS: 8     # Max number of attempts for a Modbus read

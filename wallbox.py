@@ -4,10 +4,6 @@ from pymodbus.client.sync import ModbusSerialClient
 from smbus import SMBus
 from queue import Queue
 
-PORT = '/dev/ttyAMA0'              # Serial port of Modbus interface
-BUS_ID = 1                         # Modbus ID
-MAX_READ_ATTEMPTS = 8              # Max number of attempts for a Modbus read
-
 
 # configure logging
 def create_logger(fn='logging.txt', level_file_logger=logging.INFO, level_stream_logger=logging.INFO):
@@ -162,8 +158,11 @@ class Wallbox(threading.Thread):
                 'icon': 'mdi:sine-wave'}, 
         }
     
-    def __init__(self, auto_connect=True):
+    def __init__(self, port, bus_id, max_read_attempts, auto_connect=True):
         super().__init__()
+        self.port = port                # Serial port of Modbus interface
+        self.bus_id = bus_id            # Modbus ID
+        self.max_read_attempts = max_read_attempts   # Max number of attempts for a Modbus read
         self.connected = False
         self.exiting = False
         self.task_queue = Queue(maxsize=10)
@@ -206,7 +205,7 @@ class Wallbox(threading.Thread):
         
     def connect(self, ): 
         self.mb = ModbusSerialClient(method="rtu",
-                                        port=PORT,
+                                        port=self.port,
                                         baudrate=19200,
                                         stopbits=1,
                                         bytesize=8,
@@ -224,16 +223,16 @@ class Wallbox(threading.Thread):
         # step 1: Read registers raw
         read_attempts = 0
         regs = []
-        funcs = [lambda: self.mb.read_input_registers(4, count=15, unit=BUS_ID),
-                 lambda: self.mb.read_input_registers(100, count=2, unit=BUS_ID),
-                 lambda: self.mb.read_holding_registers(257, count=3, unit=BUS_ID),
-                 lambda: self.mb.read_holding_registers(261, count=2, unit=BUS_ID)]
+        funcs = [lambda: self.mb.read_input_registers(4, count=15, unit=self.bus_id),
+                 lambda: self.mb.read_input_registers(100, count=2, unit=self.bus_id),
+                 lambda: self.mb.read_holding_registers(257, count=3, unit=self.bus_id),
+                 lambda: self.mb.read_holding_registers(261, count=2, unit=self.bus_id)]
         for func in funcs:
             while True:
                 r = func()
                 if r.isError():
                     read_attempts += 1
-                    if read_attempts > MAX_READ_ATTEMPTS:
+                    if read_attempts > self.max_read_attempts:
                         raise ModbusReadError
                 else:
                     regs.extend(r.registers)
@@ -284,10 +283,10 @@ class Wallbox(threading.Thread):
                                    (self.mb.read_input_registers, self.mb.read_holding_registers)):
             for adr in regs:
                 while True:
-                    r = read_func(int(adr), count=1, unit=BUS_ID)
+                    r = read_func(int(adr), count=1, unit=self.bus_id)
                     if r.isError():
                         read_attempts += 1
-                        if read_attempts > MAX_READ_ATTEMPTS:
+                        if read_attempts > self.max_read_attempts:
                             raise ModbusReadError
                     else:
                         vals.append((adr, r.registers[0]))
@@ -297,7 +296,7 @@ class Wallbox(threading.Thread):
     
 
     def _reg_write(self, adr: str, val: int):
-        self.mb.write_register(int(adr), int(val), unit=BUS_ID)       
+        self.mb.write_register(int(adr), int(val), unit=self.bus_id)       
         return {}
     
 
