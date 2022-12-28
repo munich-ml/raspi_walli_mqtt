@@ -71,7 +71,7 @@ class SensorBase(threading.Thread):
                 else:
                     kwargs = {}
                 
-                #return_dct = func(**kwargs)
+                return_dct = func(**kwargs)
                 try:
                     return_dct = func(**kwargs)
                 except Exception as e:
