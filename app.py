@@ -21,8 +21,8 @@ if __name__ == "__main__":
             wb.task_queue.put_nowait(task)
             time.sleep(settings["update_interval"])
     
-    except KeyboardInterrupt as e:
-        logging.info(e)
+    except KeyboardInterrupt:
+        pass
     
     logging.info("exiting main")
     wb.exit()
