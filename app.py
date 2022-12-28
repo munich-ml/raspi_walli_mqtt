@@ -1,13 +1,10 @@
-# -*- coding: utf-8 -*-
-from sensors import SensorInterface, logger
+import time
+from sensors import Wallbox
 
 
-
-if __name__ == "__main__":    
-    sensor_interface = SensorInterface()
-    task = {"sensor": "walli", 
-            "func": "capture", 
-            "callback": print}
-    sensor_interface.do_task(task)
-    
-    sensor_interface.exit()
+if __name__ == "__main__":
+    wb = Wallbox()
+    task = {"sensor": "walli", "func": "capture", "callback": print}
+    wb.task_queue.put_nowait(task)
+    time.sleep(1)
+    wb.exit()
