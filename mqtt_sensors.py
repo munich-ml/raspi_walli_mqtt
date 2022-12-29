@@ -14,14 +14,14 @@ class MqttInterface(threading.Thread):
     def __init__(self, devicename):
         self.devicename = devicename
         super().__init__()
-        self.exeting = False
+        self.exiting = False
         
         self.mqttClient = mqtt.Client(client_id=settings['client_id'])
         self.mqttClient.on_connect = self.on_connect                      #attach function to callback
         self.mqttClient.on_message = self.on_message
         self.mqttClient.will_set(f'homeassistant/sensor/{devicename}/availability', 'offline', retain=True)
         
-        print("warning: secrets")
+        logging.warning("take care of the secrets")
         with open('secrets.yaml', 'r') as f:
             mqtt_auth = yaml.safe_load(f)['mqtt_auth']
             self.mqttClient.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
@@ -48,15 +48,19 @@ class MqttInterface(threading.Thread):
     
     
     def run(self):
-        while not self.exeting:
+        while not self.exiting:
             self.update_sensors()
-            time.sleep(10)
+            time.sleep(60)
             
         logging.info('Exiting MQTT thread and running cleanup code')
         self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'offline', retain=True)
         self.mqttClient.disconnect()
         self.mqttClient.loop_stop()
 
+
+    def exit(self):
+        self.exiting = True
+        
 
     def update_sensors(self):
         payload = '{'
@@ -90,12 +94,12 @@ class MqttInterface(threading.Thread):
                 payload += f',{attr["prop"]}' if 'prop' in attr else ''
                 payload += f'}}'    
                                 
-                print("publish topic=", topic)
-                print("publish payload=", payload)           
+                logging.debug("publish topic=", topic)
+                logging.debug("publish payload=", payload)           
                 self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)
             except Exception as e:
-                logging.info('An error was produced while processing ' + str(sensor) + ' with exception: ' + str(e))
-                print(str(settings))
+                logging.warning('An error was produced while processing ' + str(sensor) + ' with exception: ' + str(e))
+                logging.warning(str(settings))
                 raise
             
         self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
@@ -104,24 +108,24 @@ class MqttInterface(threading.Thread):
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
             logging.info('Connected to broker')
-            print("subscribing : hass/status")
             client.subscribe('hass/status')
-            print("subscribing : " + f"homeassistant/sensor/{self.devicename}/availability")
+            logging.debug("Clearify the difference of the two clients")
             self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
-            print("subscribing : " + f"homeassistant/sensor/{self.devicename}/command")
             client.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
             client.subscribe("homeassistant/sensor/to_wallbox")
             client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
         elif rc == 5:
             logging.info('Authentication failed.\n Exiting.')
-            sys.exit()
+            self.exit()
         else:
-            logging.info('Connection failed')
-
+            logging.info(f'Connection failed with return code {rc}.')
+            self.exit()
+            
 
     def on_message(self, client, userdata, message):
-        print(f'Message received: {message.payload.decode()} userdata={userdata}')
+        logging.info(f'Message received: {message.payload.decode()} userdata={userdata}')
         if message.payload.decode() == 'online':
+            logging.info("reconfiguring")
             self.send_config_message()
 
 
@@ -136,10 +140,11 @@ if __name__ == '__main__':
     try:
         while True:
             sys.stdout.flush()
-            time.sleep(1)
+            time.sleep(60)
     except KeyboardInterrupt:
         pass
     
+    mqtt_if.exet()
     logging.info("exiting main")
 
 
