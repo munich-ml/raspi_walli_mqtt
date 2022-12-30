@@ -141,7 +141,7 @@ class MqttInterface(threading.Thread):
             logging.debug("Clearify the difference of the two clients")
             self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
             client.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
-            client.subscribe(f"homeassistant/switch/{self.devicename}/.")  # command topic trial
+            client.subscribe(f"homeassistant/switch/{self.devicename}/tsw")  # command topic trial
             client.subscribe("homeassistant/sensor/to_wallbox")  # proprietary, remove later, when command topic works
             client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
         elif rc == 5:
