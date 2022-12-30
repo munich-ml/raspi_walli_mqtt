@@ -29,7 +29,7 @@ def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     if attr["type"] == "sensor":
         payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
     else:
-        payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}}'        
+        payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}},'        
     payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
     payload += '}' 
     return topic, payload
