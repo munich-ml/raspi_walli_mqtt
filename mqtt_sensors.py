@@ -160,7 +160,7 @@ class MqttInterface(threading.Thread):
             self.mqttClient.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
             for entity, attrs in entities.items():
                 if attrs["type"] in ("switch", "number"):
-                    self.mqttClient.subscribe(f"homeassistant/switch/{self.devicename}/{entity}")  # subscribe to setter
+                    self.mqttClient.subscribe(f"homeassistant/{attrs['type']}/{self.devicename}/{entity}")  # subscribe to setter
             self.mqttClient.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
         elif rc == 5:
             logging.info('Authentication failed. Exiting...')
