@@ -148,7 +148,7 @@ class MqttInterface(threading.Thread):
             
 
     def on_message(self, client, userdata, message):
-        logging.info(f'Message received: {message.payload.decode()} userdata={userdata}')
+        logging.info(f"Message received: topic='{message.topic}', message='{message.payload.decode()}', userdata={userdata}")
         if message.payload.decode() == 'online':
             logging.info("reconfiguring")
             self.send_config_message()
