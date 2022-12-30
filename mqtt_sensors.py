@@ -9,6 +9,8 @@ from sensors import sensors
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     level=logging.INFO)
 
+tsw = "ON"
+
 
 def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     """Creates MQTT config message (consiting of topic and payload) 
@@ -148,7 +150,16 @@ class MqttInterface(threading.Thread):
             
 
     def on_message(self, client, userdata, message):
-        logging.info(f"Message received: topic='{message.topic}', message='{message.payload.decode()}', userdata={userdata}")
+        msg = message.payload.decode()
+        logging.info(f"Message received: topic='{message.topic}', message='{msg}', userdata={userdata}")
+        if msg in ("ON", "OFF"):
+            global tsw
+            tsw = msg
+            payload = '{"tsw":' + tsw + '}'
+            topic = f'homeassistant/switch/{self.devicename}/state'
+            pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
+            logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
+                    
         if message.payload.decode() == 'online':
             logging.info("reconfiguring")
             self.send_config_message()
