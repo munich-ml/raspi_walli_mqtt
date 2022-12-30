@@ -155,7 +155,7 @@ class MqttInterface(threading.Thread):
         if msg in ("ON", "OFF"):
             global tsw
             tsw = msg
-            payload = '{"tsw":' + tsw + '}'
+            payload = '{"tsw":"' + tsw + '"}'
             topic = f'homeassistant/switch/{self.devicename}/state'
             pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
             logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
