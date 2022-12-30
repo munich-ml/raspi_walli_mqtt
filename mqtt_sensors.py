@@ -51,14 +51,13 @@ class MqttInterface(threading.Thread):
         while not self.exiting:
             self.update_sensors()
             time.sleep(60)
-            
+
+
+    def exit(self):
         logging.info('Exiting MQTT thread and running cleanup code')
         self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'offline', retain=True)
         self.mqttClient.disconnect()
         self.mqttClient.loop_stop()
-
-
-    def exit(self):
         self.exiting = True
         
 
