@@ -21,6 +21,9 @@ sensors = {
                  'unit': '°C',
                  'icon': 'thermometer',
                  'function': ""},
+            "tsw":
+                {"name": "TSwitch",
+                 "command_topic": ""}
           }
 
 
@@ -42,10 +45,34 @@ def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     payload += '}' 
     return topic, payload
 
-devicename = "walli13"
-for sensor, attr in sensors.items():
-    print(sensor)
-    topic, payload = make_config_message(devicename, sensor, attr)
-    print(topic)
-    print(type(payload), payload)
-    print()
+def make_command_message(devicename: str, sensor: str, attr: dict):
+    """Creates MQTT config message (consiting of topic and payload) 
+    """
+    topic = f'homeassistant/sensor/{devicename}/{sensor}/config'
+    payload =  '{'
+    payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
+    payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
+    payload += f'"name":"{devicename} {attr["name"]}",'
+    payload += f'"state_topic":"homeassistant/sensor/{devicename}/state",'
+    payload += f'"command_topic":"homeassistant/sensor/{devicename}/set",'
+    payload += f'"unique_id":"{devicename}_{sensor}",'
+    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}}'
+    payload += '}' 
+    return topic, payload
+    
+
+# topic: "homeassistant/switch/irrigation/config" 
+# payload '{"name": "garden", "command_topic": "homeassistant/switch/irrigation/set", "state_topic": "homeassistant/switch/irrigation/state"}'
+
+devicename = "vader6"
+#for sensor, attr in sensors.items():
+#    print(sensor)
+#    topic, payload = make_config_message(devicename, sensor, attr)
+#    print(topic)
+#    print(type(payload), payload)
+#    print()
+
+topic, payload = make_command_message(devicename, "tsw", attr={"name": "TSwitch"})
+print(topic)
+print(type(payload), payload)
+print()

@@ -28,6 +28,22 @@ def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     payload += '}' 
     return topic, payload
 
+
+def make_command_message(devicename: str, sensor: str, attr: dict):
+    """Creates MQTT config message (consiting of topic and payload) 
+    """
+    topic = f'homeassistant/sensor/{devicename}/{sensor}/config'
+    payload =  '{'
+    payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
+    payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
+    payload += f'"name":"{devicename} {attr["name"]}",'
+    payload += f'"state_topic":"homeassistant/sensor/{devicename}/state",'
+    payload += f'"command_topic":"homeassistant/sensor/{devicename}/set",'
+    payload += f'"unique_id":"{devicename}_{sensor}",'
+    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}}'
+    payload += '}' 
+    return topic, payload
+    
     
 class MqttInterface(threading.Thread):
     def __init__(self, devicename):
@@ -99,6 +115,11 @@ class MqttInterface(threading.Thread):
                 logging.info(f"publish topic: {topic}")
                 logging.info(f"publish payload: {payload}")           
                 self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)
+            topic, payload = make_command_message(self.devicename, "tsw", attr={"name": "TSwitch"})    
+            logging.info(f"publish topic: {topic}")
+            logging.info(f"publish payload: {payload}")           
+            self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)            
+            
             except Exception as e:
                 logging.warning('An error was produced while processing ' + str(sensor) + ' with exception: ' + str(e))
                 logging.warning(str(settings))
@@ -114,7 +135,8 @@ class MqttInterface(threading.Thread):
             logging.debug("Clearify the difference of the two clients")
             self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
             client.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
-            client.subscribe("homeassistant/sensor/to_wallbox")
+            client.subscribe(f"homeassistant/sensor/{self.devicename}/set")  # command topic trial
+            client.subscribe("homeassistant/sensor/to_wallbox")  # proprietary, remove later, when command topic works
             client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
         elif rc == 5:
             logging.info('Authentication failed.\n Exiting.')
