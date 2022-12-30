@@ -22,7 +22,7 @@ def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     payload += f'"state_topic":"homeassistant/{attr["type"]}/{devicename}/state",'
     if attr["type"] == "switch":
         payload += f'"command_topic":"homeassistant/switch/{devicename}/{sensor}",'
-    payload += f'"availability_topic":"homeassistant/{attr["type"]}/{devicename}/availability",'
+    payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
     payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
     payload += f'"unique_id":"{devicename}_{sensor}",'
