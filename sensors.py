@@ -61,11 +61,6 @@ def hex2addr(hex_addr):
 
 
 sensors = {
-          'hostname':
-                {'name': 'Hostname',
-                 'icon': 'card-account-details',
-                 'sensor_type': 'sensor',
-                 'function': socket.gethostname},
           'host_ip':
                 {'name': 'Host IP',
                  'icon': 'lan',

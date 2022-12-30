@@ -40,6 +40,7 @@ def make_command_message(devicename: str, sensor: str, attr: dict):
     payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
     payload += f'"name":"{devicename} {attr["name"]}",'
     payload += f'"state_topic":"homeassistant/switch/{devicename}/state",'
+    payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
     payload += f'"command_topic":"homeassistant/switch/{devicename}/set",'
     payload += f'"unique_id":"{devicename}_{sensor}",'
     payload += f'"device":{{"identifiers":["{devicename}switch"],"name":"{devicename}"}}'
