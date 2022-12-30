@@ -86,6 +86,11 @@ entities = {
         {'name':'Power switch',
         'type': 'switch',
         'icon': 'power',
-        'value': 42},
+        'value': 'ON'},
+    'super_switch':
+        {'name':'Super switch',
+        'type': 'switch',
+        'icon': 'ladybug',
+        'value': 'OFF'},
     }
 
