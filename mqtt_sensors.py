@@ -96,8 +96,8 @@ class MqttInterface(threading.Thread):
         for sensor, attr in sensors.items():
             try:
                 topic, payload = make_config_message(self.devicename, sensor, attr)
-                logging.debug("publish topic=", topic)
-                logging.debug("publish payload=", payload)           
+                logging.info("publish topic=", topic)
+                logging.info("publish payload=", payload)           
                 self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)
             except Exception as e:
                 logging.warning('An error was produced while processing ' + str(sensor) + ' with exception: ' + str(e))
