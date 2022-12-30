@@ -24,12 +24,28 @@ sensors = {
           }
 
 
-from mqtt_sensors import make_config_message
+def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
+    """Creates MQTT config message (consiting of topic and payload) 
+    """
+    topic = f'homeassistant/sensor/{devicename}/{sensor}/config'
+    payload =  '{'
+    payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
+    payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
+    payload += f'"name":"{devicename} {attr["name"]}",'
+    payload += f'"state_topic":"homeassistant/sensor/{devicename}/state",'
+    payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
+    payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
+    payload += f'"unique_id":"{devicename}_{sensor}",'
+    payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
+    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
+    payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
+    payload += '}' 
+    return topic, payload
 
 devicename = "walli13"
 for sensor, attr in sensors.items():
     print(sensor)
     topic, payload = make_config_message(devicename, sensor, attr)
     print(topic)
-    print(payload)
+    print(type(payload), payload)
     print()
