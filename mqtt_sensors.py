@@ -73,7 +73,6 @@ class MqttInterface(threading.Thread):
 
 
     def send_config_message(self):
-
         logging.info('Sending config message to host...')
 
         for sensor, attr in sensors.items():
@@ -144,7 +143,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     
-    mqtt_if.exet()
+    mqtt_if.exit()
     logging.info("exiting main")
 
 
