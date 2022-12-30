@@ -41,7 +41,7 @@ def make_command_message(devicename: str, sensor: str, attr: dict):
     payload += f'"name":"{devicename} {attr["name"]}",'
     payload += f'"state_topic":"homeassistant/switch/{devicename}/state",'
     payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
-    payload += f'"command_topic":"homeassistant/switch/{devicename}/set",'
+    payload += f'"command_topic":"homeassistant/switch/{devicename}/{sensor}",'
     payload += f'"unique_id":"{devicename}_{sensor}",'
     payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
     payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}}'
@@ -141,7 +141,7 @@ class MqttInterface(threading.Thread):
             logging.debug("Clearify the difference of the two clients")
             self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
             client.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
-            client.subscribe(f"homeassistant/switch/{self.devicename}/set")  # command topic trial
+            client.subscribe(f"homeassistant/switch/{self.devicename}/tsw")  # command topic trial
             client.subscribe("homeassistant/sensor/to_wallbox")  # proprietary, remove later, when command topic works
             client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
         elif rc == 5:
