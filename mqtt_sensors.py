@@ -114,16 +114,17 @@ class MqttInterface(threading.Thread):
                 topic, payload = make_config_message(self.devicename, sensor, attr)
                 logging.info(f"publish topic: {topic}")
                 logging.info(f"publish payload: {payload}")           
-                self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)
-            topic, payload = make_command_message(self.devicename, "tsw", attr={"name": "TSwitch"})    
-            logging.info(f"publish topic: {topic}")
-            logging.info(f"publish payload: {payload}")           
-            self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)            
+                self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)          
             
             except Exception as e:
                 logging.warning('An error was produced while processing ' + str(sensor) + ' with exception: ' + str(e))
                 logging.warning(str(settings))
                 raise
+            
+        topic, payload = make_command_message(self.devicename, "tsw", attr={"name": "TSwitch"})    
+        logging.info(f"publish topic: {topic}")
+        logging.info(f"publish payload: {payload}")           
+        self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)  
             
         self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
 
