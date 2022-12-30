@@ -32,7 +32,7 @@ def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
 def make_command_message(devicename: str, sensor: str, attr: dict):
     """Creates MQTT config message (consiting of topic and payload) 
     """
-    topic = f'homeassistant/sensor/{devicename}/{sensor}/config'
+    topic = f'homeassistant/switch/{devicename}/{sensor}/config'
     payload =  '{'
     payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
     payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
