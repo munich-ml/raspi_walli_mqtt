@@ -109,7 +109,7 @@ class MqttInterface(threading.Thread):
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
-                topic = f'homeassistant/swtich/{self.devicename}/state'
+                topic = f'homeassistant/switch/{self.devicename}/state'
                 pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
                 logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
                 

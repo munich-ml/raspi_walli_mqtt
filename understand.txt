@@ -1,17 +1,26 @@
-2022-12-30 20:59:50,568 | WARNING  | __init__() mqtt_sensors.py line=49 | take care of the secrets
-2022-12-30 20:59:50,572 | INFO     | send_config_message() mqtt_sensors.py line=118 | Sending config message to host...
-2022-12-30 20:59:50,572 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/sensor/vader15/host_ip/config
-2022-12-30 20:59:50,572 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"name":"vader15 Host IP","state_topic":"homeassistant/sensor/vader15/state","availability_topic":"homeassistant/sensor/vader15/availability","value_template":"{{value_json.host_ip}}","unique_id":"vader15_host_ip","device":{"identifiers":["vader15_sensor"],"name":"vader15"},"icon":"mdi:lan"}
-2022-12-30 20:59:50,573 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/sensor/vader15/wifi_strength/config
-2022-12-30 20:59:50,573 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"device_class":"signal_strength","state_class":"measurement","name":"vader15 Wifi Strength","state_topic":"homeassistant/sensor/vader15/state","availability_topic":"homeassistant/sensor/vader15/availability","unit_of_measurement":"dBm","value_template":"{{value_json.wifi_strength}}","unique_id":"vader15_wifi_strength","device":{"identifiers":["vader15_sensor"],"name":"vader15"},"icon":"mdi:wifi"}
-2022-12-30 20:59:50,573 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/sensor/vader15/temperature/config
-2022-12-30 20:59:50,573 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"device_class":"temperature","state_class":"measurement","name":"vader15 Temperature","state_topic":"homeassistant/sensor/vader15/state","availability_topic":"homeassistant/sensor/vader15/availability","unit_of_measurement":"°C","value_template":"{{value_json.temperature}}","unique_id":"vader15_temperature","device":{"identifiers":["vader15_sensor"],"name":"vader15"},"icon":"mdi:thermometer"}
-2022-12-30 20:59:50,573 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/switch/vader15/power_switch/config
-2022-12-30 20:59:50,574 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"name":"vader15 Power switch","state_topic":"homeassistant/switch/vader15/state","command_topic":"homeassistant/switch/vader15/power_switch","availability_topic":"homeassistant/switch/vader15/availability","value_template":"{{value_json.power_switch}}","unique_id":"vader15_power_switch","device":{"identifiers":["vader15_switch"],"name":"vader15"},"icon":"mdi:thermometer"}
-2022-12-30 20:59:50,580 | INFO     | on_connect() mqtt_sensors.py line=137 | Connected to broker
-2022-12-30 20:59:50,586 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/sensor/vader15/command', message='setup'
-2022-12-30 20:59:50,587 | INFO     | on_message() mqtt_sensors.py line=158 | entity: command
-2022-12-30 20:59:50,587 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/sensor/vader15/command', message='setup'
-2022-12-30 20:59:50,588 | INFO     | on_message() mqtt_sensors.py line=158 | entity: command
-2022-12-30 20:59:50,595 | INFO     | update_states() mqtt_sensors.py line=101 | (0, 11) from publish(topic=homeassistant/sensor/vader15/state, payload={"host_ip": "192.168.178.44","wifi_strength": "-71","temperature": "38.5"})
-2022-12-30 20:59:50,596 | INFO     | update_states() mqtt_sensors.py line=114 | (0, 12) from publish(topic=homeassistant/swtich/vader15/state, payload={"power_switch": "ON"})
+2022-12-30 21:01:57,472 | WARNING  | __init__() mqtt_sensors.py line=49 | take care of the secrets
+2022-12-30 21:01:57,484 | INFO     | send_config_message() mqtt_sensors.py line=118 | Sending config message to host...
+2022-12-30 21:01:57,484 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/sensor/vader15/host_ip/config
+2022-12-30 21:01:57,485 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"name":"vader15 Host IP","state_topic":"homeassistant/sensor/vader15/state","availability_topic":"homeassistant/sensor/vader15/availability","value_template":"{{value_json.host_ip}}","unique_id":"vader15_host_ip","device":{"identifiers":["vader15_sensor"],"name":"vader15"},"icon":"mdi:lan"}
+2022-12-30 21:01:57,485 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/sensor/vader15/wifi_strength/config
+2022-12-30 21:01:57,486 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"device_class":"signal_strength","state_class":"measurement","name":"vader15 Wifi Strength","state_topic":"homeassistant/sensor/vader15/state","availability_topic":"homeassistant/sensor/vader15/availability","unit_of_measurement":"dBm","value_template":"{{value_json.wifi_strength}}","unique_id":"vader15_wifi_strength","device":{"identifiers":["vader15_sensor"],"name":"vader15"},"icon":"mdi:wifi"}
+2022-12-30 21:01:57,487 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/sensor/vader15/temperature/config
+2022-12-30 21:01:57,487 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"device_class":"temperature","state_class":"measurement","name":"vader15 Temperature","state_topic":"homeassistant/sensor/vader15/state","availability_topic":"homeassistant/sensor/vader15/availability","unit_of_measurement":"°C","value_template":"{{value_json.temperature}}","unique_id":"vader15_temperature","device":{"identifiers":["vader15_sensor"],"name":"vader15"},"icon":"mdi:thermometer"}
+2022-12-30 21:01:57,488 | INFO     | send_config_message() mqtt_sensors.py line=123 | publish topic: homeassistant/switch/vader15/power_switch/config
+2022-12-30 21:01:57,488 | INFO     | send_config_message() mqtt_sensors.py line=124 | publish payload: {"name":"vader15 Power switch","state_topic":"homeassistant/switch/vader15/state","command_topic":"homeassistant/switch/vader15/power_switch","availability_topic":"homeassistant/sensor/vader15/availability","value_template":"{{value_json.power_switch}}","unique_id":"vader15_power_switch","device":{"identifiers":["vader15_switch"],"name":"vader15"},"icon":"mdi:thermometer"}
+2022-12-30 21:01:57,491 | INFO     | on_connect() mqtt_sensors.py line=137 | Connected to broker
+2022-12-30 21:01:57,530 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/sensor/vader15/command', message='setup'
+2022-12-30 21:01:57,549 | INFO     | on_message() mqtt_sensors.py line=158 | entity: command
+2022-12-30 21:01:57,551 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/sensor/vader15/command', message='setup'
+2022-12-30 21:01:57,552 | INFO     | on_message() mqtt_sensors.py line=158 | entity: command
+2022-12-30 21:01:57,559 | INFO     | update_states() mqtt_sensors.py line=101 | (0, 11) from publish(topic=homeassistant/sensor/vader15/state, payload={"host_ip": "192.168.178.44","wifi_strength": "-73","temperature": "38.0"})
+2022-12-30 21:01:57,561 | INFO     | update_states() mqtt_sensors.py line=114 | (0, 12) from publish(topic=homeassistant/swtich/vader15/state, payload={"power_switch": "ON"})
+2022-12-30 21:02:02,536 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/switch/vader15/power_switch', message='OFF'
+2022-12-30 21:02:02,536 | INFO     | on_message() mqtt_sensors.py line=158 | entity: power_switch
+2022-12-30 21:02:02,537 | INFO     | update_states() mqtt_sensors.py line=114 | (0, 13) from publish(topic=homeassistant/swtich/vader15/state, payload={"power_switch": "OFF"})
+2022-12-30 21:02:04,238 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/switch/vader15/power_switch', message='ON'
+2022-12-30 21:02:04,238 | INFO     | on_message() mqtt_sensors.py line=158 | entity: power_switch
+2022-12-30 21:02:04,239 | INFO     | update_states() mqtt_sensors.py line=114 | (0, 14) from publish(topic=homeassistant/swtich/vader15/state, payload={"power_switch": "ON"})
+2022-12-30 21:02:05,681 | INFO     | on_message() mqtt_sensors.py line=156 | Message received: topic='homeassistant/switch/vader15/power_switch', message='ON'
+2022-12-30 21:02:05,682 | INFO     | on_message() mqtt_sensors.py line=158 | entity: power_switch
+2022-12-30 21:02:05,682 | INFO     | update_states() mqtt_sensors.py line=114 | (0, 15) from publish(topic=homeassistant/swtich/vader15/state, payload={"power_switch": "ON"})
