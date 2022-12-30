@@ -105,7 +105,7 @@ class MqttInterface(threading.Thread):
             payload = '{'
             for sensor, attr in entities.items():
                 if attr["type"] == "switch":        
-                    payload += f'"{sensor}": {entities[sensor]["value"]},'
+                    payload += '"{}": "{}",'.format(sensor, entities[sensor]["value"])
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
