@@ -9,6 +9,25 @@ from sensors import sensors
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     level=logging.INFO)
 
+
+def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
+    """Creates MQTT config message (consiting of topic and payload) 
+    """
+    topic = f'homeassistant/sensor/{devicename}/{sensor}/config'
+    payload =  '{'
+    payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
+    payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
+    payload += f'"name":"{devicename} {attr["name"]}",'
+    payload += f'"state_topic":"homeassistant/sensor/{devicename}/state",'
+    payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
+    payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
+    payload += f'"unique_id":"{devicename}_{sensor}",'
+    payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
+    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
+    payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
+    payload += '}' 
+    return topic, payload
+
     
 class MqttInterface(threading.Thread):
     def __init__(self, devicename):
@@ -69,29 +88,14 @@ class MqttInterface(threading.Thread):
         topic = f'homeassistant/sensor/{self.devicename}/state'
         pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
         logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
-
+    
 
     def send_config_message(self):
         logging.info('Sending config message to host...')
 
         for sensor, attr in sensors.items():
             try:
-                topic = f'homeassistant/{attr["sensor_type"]}/{self.devicename}/{sensor}/config'
-                payload =  f'{{'
-                payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
-                payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
-                payload += f'"name":"{self.devicename} {attr["name"]}",'
-                payload += f'"state_topic":"homeassistant/sensor/{self.devicename}/state",'
-                payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
-                payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
-                payload += f'"unique_id":"{self.devicename}_{attr["sensor_type"]}_{sensor}",'
-                payload += f'"availability_topic":"homeassistant/sensor/{self.devicename}/availability",'
-                payload += f'"device":{{"identifiers":["{self.devicename}_sensor"],'
-                payload += f'"name":"{self.devicename}"}}'
-                payload += f',"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
-                payload += f',{attr["prop"]}' if 'prop' in attr else ''
-                payload += f'}}'    
-                                
+                topic, payload = make_config_message(self.devicename, sensor, attr)
                 logging.debug("publish topic=", topic)
                 logging.debug("publish payload=", payload)           
                 self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)
