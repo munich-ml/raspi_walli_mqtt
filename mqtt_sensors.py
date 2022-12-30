@@ -2,49 +2,34 @@
 import sys, threading, time, yaml, logging
 import paho.mqtt.client as mqtt
 import datetime as dt
-from sensors import sensors
+from sensors import entities
 
 
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     level=logging.INFO)
 
-tsw = "ON"
 
 
 def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     """Creates MQTT config message (consiting of topic and payload) 
     """
-    topic = f'homeassistant/sensor/{devicename}/{sensor}/config'
+    topic = f'homeassistant/{attr["type"]}/{devicename}/{sensor}/config'
     payload =  '{'
     payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
     payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
     payload += f'"name":"{devicename} {attr["name"]}",'
-    payload += f'"state_topic":"homeassistant/sensor/{devicename}/state",'
+    payload += f'"state_topic":"homeassistant/{attr["type"]}/{devicename}/state",'
+    if attr["type"] == "switch":
+        payload += f'"command_topic":"homeassistant/switch/{devicename}/{sensor}",'
+    payload += f'"availability_topic":"homeassistant/{attr["type"]}/{devicename}/availability",'
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
     payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
     payload += f'"unique_id":"{devicename}_{sensor}",'
-    payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
-    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
-    payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
-    payload += '}' 
-    return topic, payload
-
-
-def make_command_message(devicename: str, sensor: str, attr: dict):
-    """Creates MQTT config message (consiting of topic and payload) 
-    """
-    topic = f'homeassistant/switch/{devicename}/{sensor}/config'
-    payload =  '{'
-    payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
-    payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
-    payload += f'"name":"{devicename} {attr["name"]}",'
-    payload += f'"state_topic":"homeassistant/switch/{devicename}/state",'
-    payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
-    payload += f'"command_topic":"homeassistant/switch/{devicename}/{sensor}",'
-    payload += f'"unique_id":"{devicename}_{sensor}",'
-    payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
-    payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}}'
+    if attr["type"] == "sensor":
+        payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
+    else:
+        payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}}'        
     payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
     payload += '}' 
     return topic, payload
@@ -89,7 +74,7 @@ class MqttInterface(threading.Thread):
     
     def run(self):
         while not self.exiting:
-            self.update_sensors()
+            self.update_states()
             time.sleep(60)
 
 
@@ -101,20 +86,38 @@ class MqttInterface(threading.Thread):
         self.exiting = True
         
 
-    def update_sensors(self):
-        payload = '{'
-        for sensor, attr in sensors.items():        
-            payload += f'"{sensor}": "{attr["function"]()}",'
-        payload = payload[:-1] + '}'
-        topic = f'homeassistant/sensor/{self.devicename}/state'
-        pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
-        logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
-    
+    def update_states(self, update_sensors=True, update_switches=True):
+        if update_sensors:
+            any_update = False
+            payload = '{'
+            for sensor, attr in entities.items():
+                if attr["type"] == "sensor":        
+                    payload += f'"{sensor}": "{attr["function"]()}",'
+                    any_update = True
+            if any_update:
+                payload = payload[:-1] + '}'
+                topic = f'homeassistant/sensor/{self.devicename}/state'
+                pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
+                logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
+
+        if update_switches:
+            any_update = False
+            payload = '{'
+            for sensor, attr in entities.items():
+                if attr["type"] == "switch":        
+                    payload += f'"{sensor}": "{entities[sensor]["value"]}",'
+                    any_update = True
+            if any_update:
+                payload = payload[:-1] + '}'
+                topic = f'homeassistant/swtich/{self.devicename}/state'
+                pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
+                logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
+                
 
     def send_config_message(self):
         logging.info('Sending config message to host...')
 
-        for sensor, attr in sensors.items():
+        for sensor, attr in entities.items():
             try:
                 topic, payload = make_config_message(self.devicename, sensor, attr)
                 logging.info(f"publish topic: {topic}")
@@ -126,11 +129,6 @@ class MqttInterface(threading.Thread):
                 logging.warning(str(settings))
                 raise
             
-        topic, payload = make_command_message(self.devicename, "tsw", attr={"name": "TSwitch"})    
-        logging.info(f"publish topic: {topic}")
-        logging.info(f"publish payload: {payload}")           
-        self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)  
-            
         self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
 
 
@@ -141,7 +139,9 @@ class MqttInterface(threading.Thread):
             logging.debug("Clearify the difference of the two clients")
             self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
             self.mqttClient.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
-            self.mqttClient.subscribe(f"homeassistant/switch/{self.devicename}/tsw")  # command topic trial
+            for entity, attrs in entities.items():
+                if attrs["type"] == "switch":
+                    self.mqttClient.subscribe(f"homeassistant/switch/{self.devicename}/{entity}")  # subscribe to setter
             self.mqttClient.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
         elif rc == 5:
             logging.info('Authentication failed. Exiting...')
@@ -153,16 +153,15 @@ class MqttInterface(threading.Thread):
 
     def on_message(self, client, userdata, message):
         msg = message.payload.decode()
-        logging.info(f"Message received: topic='{message.topic}', message='{msg}', userdata={userdata}")
-        if msg in ("ON", "OFF"):
-            global tsw
-            tsw = msg
-            payload = '{"tsw":"' + tsw + '"}'
-            topic = f'homeassistant/switch/{self.devicename}/state'
-            pub_ret = self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=False)
-            logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")
+        logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
+        entity = str(message.topic).split("/")[-1]
+        logging.info(f"entity: {entity}")
+        global entities
+        if entity in entities:
+            entities[entity]["value"] = msg
+            self.update_states(update_sensors=False)  # send confirmation
                     
-        if message.payload.decode() == 'online':
+        elif message.payload.decode() == 'online':
             logging.info("reconfiguring")
             self.send_config_message()
 

@@ -60,27 +60,32 @@ def hex2addr(hex_addr):
     return ip
 
 
-sensors = {
-          'host_ip':
-                {'name': 'Host IP',
-                 'icon': 'lan',
-                 'sensor_type': 'sensor',
-                 'function': get_host_ip},
-          'wifi_strength':
-                {"device_class": 'signal_strength',
-                 'state_class':'measurement',
-                 'name':'Wifi Strength',
-                 'unit': 'dBm',
-                 'icon': 'wifi',
-                 'sensor_type': 'sensor',
-                 'function': get_wifi_strength},
-          'temperature':
-                {'name':'Temperature',
-                 'device_class': 'temperature',
-		         'state_class':'measurement',
-                 'unit': '°C',
-                 'icon': 'thermometer',
-                 'sensor_type': 'sensor',
-                 'function': get_temp},
-          }
+entities = {
+    'host_ip':
+        {'name': 'Host IP',
+        'type': 'sensor',
+        'icon': 'lan',
+        'function': get_host_ip},
+    'wifi_strength':
+        {'name':'Wifi Strength',
+        'type': 'sensor',
+        'device_class': 'signal_strength',
+        'state_class': 'measurement',
+        'unit': 'dBm',
+        'icon': 'wifi',
+        'function': get_wifi_strength},
+    'temperature':
+        {'name':'Temperature',
+        'type': 'sensor',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+        'unit': '°C',
+        'icon': 'thermometer',
+        'function': get_temp},
+    'power_switch':
+        {'name':'Power switch',
+        'type': 'switch',
+        'icon': 'thermometer',
+        'value': 'ON'},
+    }
 
