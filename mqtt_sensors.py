@@ -83,13 +83,13 @@ class MqttDevice:
     def set_states(self, states_dict):
         for entity, value in states_dict.items():
             if entity in self._entities:
-                if value.isnumeric():
-                    value = int(value)
-                else:
-                    try:
-                        value = float(value)
-                    except:
-                        pass
+                #if value.isnumeric():
+                #    value = int(value)
+                #else:
+                #    try:
+                #        value = float(value)
+                #    except:
+                #        pass
                 if value != self._entities[entity]["value"]:
                     self._entities[entity]["value"] = value
                     self._entities[entity]["value_updated"] = True
@@ -152,9 +152,10 @@ if __name__ == '__main__':
     try:
         while True:
             stat = device.get_states()
+            logging.info(stat)
             if stat["power_switch"] == "ON":
                 delta = stat["set_temperature"] - stat["temperature"]
-                new_temperature = stat["temperature"] + delta * FOLLOW_RATE
+                new_temperature = round(stat["temperature"] + delta * FOLLOW_RATE, 1)
                 device.set_states({"temperature": new_temperature})
                 device.publish_updates()
             time.sleep(1)
