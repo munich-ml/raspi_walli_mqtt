@@ -139,13 +139,22 @@ if __name__ == '__main__':
     device = MqttDevice(hostname=settings['mqtt']['hostname'], port=settings['mqtt']['port'], 
                         devicename=settings["devicename"], client_id=settings['client_id'],
                         entities=entities)
+    
+    FOLLOW_RATE = 0.2
+    
     try:
         while True:
-            device.publish_updates()
-            time.sleep(settings["update_interval"])
-            device.set_states({"temperature": random.choice((13.1, 15.7, 21.3, 37.9)),
-                               "set_temperature": random.choice((19, 21.4, 27.9)),
-                               "power_switch": random.choice(("OFF", "ON"))})
+            stat = device.get()
+            if stat["power_switch"] == "ON":
+                delta = stat["set_temperature"] - stat["temperature"]
+                new_temperature = stat["temperature"] + delta * FOLLOW_RATE
+                device.set_states({"temperature": new_temperature})
+                device.publish_updates()
+            time.sleep(1)
+            #time.sleep(settings["update_interval"])
+            #device.set_states({"temperature": random.choice((13.1, 15.7, 21.3, 37.9)),
+            #                   "set_temperature": random.choice((19, 21.4, 27.9)),
+            #                   "power_switch": random.choice(("OFF", "ON"))})
     except KeyboardInterrupt:
         pass
     

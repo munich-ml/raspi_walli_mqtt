@@ -1,1 +1,45 @@
+2022-12-31 13:59:07,302 | INFO     | _publish_config() mqtt_sensors.py line=94 | publish config topic=homeassistant/sensor/dev10/temperature/config, payload={"device_class":"temperature","state_class":"measurement","name":"dev10 Measured temperature","state_topic":"homeassistant/sensor/dev10/state","availability_topic":"homeassistant/sensor/dev10/availability","unit_of_measurement":"°C","value_template":"{{value_json.temperature}}","unique_id":"dev10_temperature","device":{"identifiers":["dev10"],"name":"dev10"},"icon":"mdi:thermometer"}
+2022-12-31 13:59:07,303 | INFO     | _publish_config() mqtt_sensors.py line=94 | publish config topic=homeassistant/switch/dev10/power_switch/config, payload={"name":"dev10 Power switch","state_topic":"homeassistant/switch/dev10/state","command_topic":"homeassistant/switch/dev10/power_switch","availability_topic":"homeassistant/sensor/dev10/availability","value_template":"{{value_json.power_switch}}","unique_id":"dev10_power_switch","device":{"identifiers":["dev10"],"name":"dev10"},"icon":"mdi:power"}
+2022-12-31 13:59:07,304 | INFO     | _publish_config() mqtt_sensors.py line=94 | publish config topic=homeassistant/number/dev10/set_temperature/config, payload={"name":"dev10 Set temperature","state_topic":"homeassistant/number/dev10/state","command_topic":"homeassistant/number/dev10/set_temperature","availability_topic":"homeassistant/sensor/dev10/availability","unit_of_measurement":"°C","value_template":"{{value_json.set_temperature}}","unique_id":"dev10_set_temperature","min":"16.5","max":"35.3","step":"0.1","device":{"identifiers":["dev10"],"name":"dev10"},"icon":"mdi:thermometer"}
+2022-12-31 13:59:07,330 | INFO     | _on_connect() mqtt_sensors.py line=101 | Successfully connected to broker
+2022-12-31 13:59:07,333 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 11) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "38.1"})
+2022-12-31 13:59:07,334 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 12) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "OFF"})
+2022-12-31 13:59:07,335 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 13) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "23"})
+2022-12-31 13:59:07,354 | INFO     | _on_message() mqtt_sensors.py line=121 | Message received: topic='homeassistant/sensor/dev10/command', message='setup'
+2022-12-31 13:59:17,308 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 14) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "13.1"})
+2022-12-31 13:59:17,309 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 15) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "2"})
+2022-12-31 13:59:27,320 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 16) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "21.3"})
+2022-12-31 13:59:37,322 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 17) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "13.1"})
+2022-12-31 13:59:37,323 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 18) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "ON"})
+2022-12-31 13:59:37,324 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 19) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "87"})
+2022-12-31 13:59:47,336 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 20) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "21.3"})
+2022-12-31 13:59:57,347 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 21) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "15.7"})
+2022-12-31 13:59:57,348 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 22) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "OFF"})
+2022-12-31 13:59:57,349 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 23) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "2"})
+2022-12-31 14:00:07,351 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 24) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "37.9"})
+2022-12-31 14:00:07,352 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 25) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "ON"})
+2022-12-31 14:00:17,363 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 26) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "21.3"})
+2022-12-31 14:00:17,364 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 27) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "OFF"})
+2022-12-31 14:00:27,367 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 28) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "15.7"})
+2022-12-31 14:00:36,416 | INFO     | _on_message() mqtt_sensors.py line=121 | Message received: topic='homeassistant/number/dev10/set_temperature', message='22.6'
+2022-12-31 14:00:36,417 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 29) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "22.6"})
+2022-12-31 14:00:37,369 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 30) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "13.1"})
+2022-12-31 14:00:37,370 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 31) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "ON"})
+2022-12-31 14:00:37,371 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 32) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "2"})
+2022-12-31 14:00:40,312 | INFO     | _on_message() mqtt_sensors.py line=121 | Message received: topic='homeassistant/number/dev10/set_temperature', message='35.3'
+2022-12-31 14:00:40,313 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 33) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "35.3"})
+2022-12-31 14:00:41,782 | INFO     | _on_message() mqtt_sensors.py line=121 | Message received: topic='homeassistant/number/dev10/set_temperature', message='16.5'
+2022-12-31 14:00:41,783 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 34) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "16.5"})
+2022-12-31 14:00:45,009 | INFO     | _on_message() mqtt_sensors.py line=121 | Message received: topic='homeassistant/number/dev10/set_temperature', message='26.2'
+2022-12-31 14:00:45,010 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 35) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "26.2"})
+2022-12-31 14:00:47,373 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 36) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "21.3"})
+2022-12-31 14:00:47,374 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 37) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "OFF"})
+2022-12-31 14:00:47,375 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 38) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "2"})
+2022-12-31 14:00:57,376 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 39) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "15.7"})
+2022-12-31 14:00:57,377 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 40) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "87"})
+2022-12-31 14:01:07,379 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 41) from publish(topic=homeassistant/sensor/dev10/state, payload={"temperature": "37.9"})
+2022-12-31 14:01:07,380 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 42) from publish(topic=homeassistant/switch/dev10/state, payload={"power_switch": "ON"})
+2022-12-31 14:01:07,381 | INFO     | publish_updates() mqtt_sensors.py line=76 | (0, 43) from publish(topic=homeassistant/number/dev10/state, payload={"set_temperature": "2"})
+^C2022-12-31 14:01:08,373 | INFO     | exit() mqtt_sensors.py line=56 | Exiting MQTT thread and running cleanup code
+2022-12-31 14:01:08,375 | INFO     | <module>() mqtt_sensors.py line=153 | exiting main
 
