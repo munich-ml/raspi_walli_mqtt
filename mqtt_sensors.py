@@ -26,14 +26,15 @@ def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
     payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
     payload += f'"unique_id":"{devicename}_{sensor}",'
-    if attr["type"] == "sensor":
-        payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
-    elif attr["type"] == "switch":
-        payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}},'        
-    elif attr["type"] == "number":
-        payload += f'"device":{{"identifiers":["{devicename}_number"],"name":"{devicename}"}},'       
-    else:
-        raise ValueError(f"unknown type: {attr['type']}") 
+    payload += f'"device":{{"identifiers":["{devicename}"],"name":"{devicename}"}},'
+    #if attr["type"] == "sensor":
+    #    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
+    #elif attr["type"] == "switch":
+    #    payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}},'        
+    #elif attr["type"] == "number":
+    #    payload += f'"device":{{"identifiers":["{devicename}_number"],"name":"{devicename}"}},'       
+    #else:
+    #    raise ValueError(f"unknown type: {attr['type']}") 
     payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
     payload += '}' 
     return topic, payload
