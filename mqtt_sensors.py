@@ -62,6 +62,8 @@ class MqttDevice:
             for entity, attr in self._entities.items():
                 if attr["type"] == type_:
                     if ignore_updated_flag or attr["value_updated"]:
+                        if type_ == "switch":
+                            logging.info(f"here ist the power_switch update: {entity}, {attr['value']}")
                         payload += '"{}": "{}",'.format(entity, attr["value"])
                         attr["value_updated"] = False
                         any_update = True
