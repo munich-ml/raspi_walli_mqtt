@@ -21,6 +21,10 @@ def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
     payload += f'"value_template":"{{{{value_json.{entity}}}}}",'
     payload += f'"unique_id":"{devicename}_{entity}",'
+    if attr["type"] == "number":
+        payload += f'"min":"{attr["min"]}",' if 'min' in attr else ''
+        payload += f'"max":"{attr["max"]}",' if 'max' in attr else ''
+        payload += f'"step":"{attr["step"]}",' if 'step' in attr else ''    
     payload += f'"device":{{"identifiers":["{devicename}"],"name":"{devicename}"}},'
     payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
     payload += '}' 
@@ -34,7 +38,7 @@ class MqttDevice:
         for entity in entities.values():
             entity.update({"value_updated": False})
         self.client = mqtt.Client(client_id=client_id)
-        self.client._on_connect = self._on_connect                      #attach function to callback
+        self.client._on_connect = self._on_connect
         self.client._on_message = self._on_message
         self.client.will_set(f'homeassistant/sensor/{devicename}/availability', 'offline', retain=True)
 
@@ -62,8 +66,6 @@ class MqttDevice:
             for entity, attr in self._entities.items():
                 if attr["type"] == type_:
                     if ignore_updated_flag or attr["value_updated"]:
-                        if type_ == "switch":
-                            logging.info(f"here ist the power_switch update: {entity}, {attr['value']}")
                         payload += '"{}": "{}",'.format(entity, attr["value"])
                         attr["value_updated"] = False
                         any_update = True
@@ -91,7 +93,6 @@ class MqttDevice:
             topic, payload = make_config_message(self.devicename, entity, attr)
             logging.info(f"publish config topic={topic}, payload={payload}")           
             self.client.publish(topic=topic, payload=payload, qos=1, retain=True)          
-            
         self.client.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
 
 
@@ -105,7 +106,7 @@ class MqttDevice:
                 if attrs["type"] in ("switch", "number"):
                     self.client.subscribe(f"homeassistant/{attrs['type']}/{self.devicename}/{entity}")  # subscribe to setters
             self.client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
-            self.publish_updates(ignore_updated_flag=True)  # send confirmation
+            self.publish_updates(ignore_updated_flag=True)  # send initial sensor values
             
         elif rc == 5:
             logging.info('Authentication failed. Exiting...')
