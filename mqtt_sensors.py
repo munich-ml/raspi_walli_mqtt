@@ -63,7 +63,7 @@ class MqttDevice:
                 if attr["type"] == type_:
                     if ignore_updated_flag or attr["value_updated"]:
                         payload += '"{}": "{}",'.format(entity, attr["value"])
-                        attr["value_updated"] = True
+                        attr["value_updated"] = False
                         any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
