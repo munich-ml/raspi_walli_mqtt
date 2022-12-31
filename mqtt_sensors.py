@@ -59,7 +59,7 @@ class MqttDevice:
             payload = '{'
             for entity, attr in self.entities.items():
                 if attr["type"] == "sensor":        
-                    payload += '"{}": "{}",'.format(entity, sensors[entity]["value"])
+                    payload += '"{}": "{}",'.format(entity, self.entities[entity]["value"])
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
@@ -72,7 +72,7 @@ class MqttDevice:
             payload = '{'
             for entity, attr in self.entities.items():
                 if attr["type"] == "switch":        
-                    payload += '"{}": "{}",'.format(entity, sensors[entity]["value"])
+                    payload += '"{}": "{}",'.format(entity, self.entities[entity]["value"])
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
@@ -85,7 +85,7 @@ class MqttDevice:
             payload = '{'
             for entity, attr in self.entities.items():
                 if attr["type"] == "number":        
-                    payload += '"{}": "{}",'.format(entity, sensors[entity]["value"])
+                    payload += '"{}": "{}",'.format(entity, self.entities[entity]["value"])
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
