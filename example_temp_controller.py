@@ -9,15 +9,14 @@ if __name__ == '__main__':
     with open("settings.yaml") as f:
         settings = yaml.safe_load(f)
 
-    with open('entities.yaml', 'r') as f:
+    with open('entities_temp_controller.yaml', 'r') as f:
         entities = yaml.safe_load(f)
     
     device = MqttDevice(hostname=settings['mqtt']['hostname'], port=settings['mqtt']['port'], 
                         devicename=settings["devicename"], client_id=settings['client_id'],
                         entities=entities)
     
-    FOLLOW_RATE = 0.2
-    
+    FOLLOW_RATE = 0.1
     try:
         while True:
             stat = device.get_states()
