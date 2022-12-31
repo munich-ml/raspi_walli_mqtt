@@ -117,21 +117,23 @@ class MqttDevice:
             
 
     def _on_message(self, client, userdata, message):
-        msg = message.payload.decode()
-        msg = message.payload
+        def try_int_float_conversion(value):
+            if isinstance(value, str):
+                if value.isnumeric():
+                    return(int(value))
+                try:
+                    return(float(value))
+                except ValueError:
+                    pass         
+            return value
+           
+        msg = try_int_float_conversion(message.payload.decode())
         logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
         if entity in self._entities:
-            #if value.isnumeric():
-            #    value = int(value)
-            #else:
-            #    try:
-            #        value = float(value)
-            #    except:
-            #        pass
             self.set_states({entity: msg})
             self.publish_updates()  # send confirmation to homeassistant          
-        elif message.payload.decode() == 'online':
+        elif msg == 'online':
             logging.info("reconfiguring")
             self._publish_config()
 
