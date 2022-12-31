@@ -1,4 +1,4 @@
-# MQTT device variable definition file
+# MQTT device entities definition file
 # Home Assistant will discover each item (e.g. temperature) as an entity
 temperature:
   type: sensor                # sensor = data flow: MQTT device -> MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/sensor/
@@ -7,6 +7,7 @@ temperature:
   state_class: measurement    # (optional) Avaliable options: https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes
   unit: °C                    # (optional) Defines the unit_of_measurement in Home Assistant
   icon: thermometer           # (optional) Define an MSI icon from https://materialdesignicons.com/
+  value: 38.1
 set_temperature:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
   name: Set temperature       # friendly name that shows up in Home Assitant GUI
@@ -14,7 +15,9 @@ set_temperature:
   icon: thermometer           # (optional) Define an MSI icon from https://materialdesignicons.com/
   min: 16
   max: 35
+  values: 23
 power_switch:
   type: switch                # switch = data flow: MQTT device <- MQTT broker. 
   name: Power switch          # friendly name that shows up in Home Assitant GUI
   icon: power                 # (optional) Define an MSI icon from https://materialdesignicons.com/
+  value: ON
