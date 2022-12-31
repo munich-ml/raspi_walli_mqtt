@@ -144,7 +144,7 @@ if __name__ == '__main__':
     
     try:
         while True:
-            stat = device.get()
+            stat = device.get_states()
             if stat["power_switch"] == "ON":
                 delta = stat["set_temperature"] - stat["temperature"]
                 new_temperature = stat["temperature"] + delta * FOLLOW_RATE
