@@ -45,7 +45,6 @@ class MqttDevice:
             del mqtt_auth
 
         self.client.connect(hostname, port)
-        self._publish_config()
         self.client.loop_start()
     
 
@@ -97,7 +96,7 @@ class MqttDevice:
         if rc == 0:
             logging.info('Successfully connected to broker')
             self.client.subscribe('hass/status')
-            self.client.publish(f'homeassistant/sensor/{self.devicename}/availability', 'online', retain=True)
+            self._publish_config()
             self.client.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
             for entity, attrs in self._entities.items():
                 if attrs["type"] in ("switch", "number"):
