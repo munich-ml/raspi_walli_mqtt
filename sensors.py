@@ -74,14 +74,14 @@ entities = {
     #    'unit': 'dBm',
     #    'icon': 'wifi',
     #    'function': get_wifi_strength},
-    #'temperature':
-    #    {'name':'Temperature',
-    #    'type': 'sensor',
-    #    'device_class': 'temperature',
-    #    'state_class': 'measurement',
-    #    'unit': '°C',
-    #    'icon': 'thermometer',
-    #    'function': get_temp},
+    'temperature':
+        {'name':'Temperature',
+        'type': 'sensor',
+        'device_class': 'temperature',
+        'state_class': 'measurement',
+        'unit': '°C',
+        'icon': 'thermometer',
+        'function': get_temp},
     'power_switch':
         {'name':'Power switch',
         'type': 'switch',

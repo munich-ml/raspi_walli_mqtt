@@ -9,38 +9,28 @@ logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(fil
                     level=logging.INFO)
 
 
-def make_config_message(devicename: str, sensor: str, attr: dict) -> tuple:
+def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
     """Creates MQTT config message (consiting of topic and payload) 
     """
-    topic = f'homeassistant/{attr["type"]}/{devicename}/{sensor}/config'
+    topic = f'homeassistant/{attr["type"]}/{devicename}/{entity}/config'
     payload =  '{'
     payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
     payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
     payload += f'"name":"{devicename} {attr["name"]}",'
     payload += f'"state_topic":"homeassistant/{attr["type"]}/{devicename}/state",'
-    if attr["type"] == "switch":
-        payload += f'"command_topic":"homeassistant/switch/{devicename}/{sensor}",'
-    elif attr["type"] == "number":
-        payload += f'"command_topic":"homeassistant/number/{devicename}/{sensor}",'
+    if attr["type"] in ("switch", "number"):
+        payload += f'"command_topic":"homeassistant/{attr["type"]}/{devicename}/{entity}",'
     payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
-    payload += f'"value_template":"{{{{value_json.{sensor}}}}}",'
-    payload += f'"unique_id":"{devicename}_{sensor}",'
+    payload += f'"value_template":"{{{{value_json.{entity}}}}}",'
+    payload += f'"unique_id":"{devicename}_{entity}",'
     payload += f'"device":{{"identifiers":["{devicename}"],"name":"{devicename}"}},'
-    #if attr["type"] == "sensor":
-    #    payload += f'"device":{{"identifiers":["{devicename}_sensor"],"name":"{devicename}"}},'
-    #elif attr["type"] == "switch":
-    #    payload += f'"device":{{"identifiers":["{devicename}_switch"],"name":"{devicename}"}},'        
-    #elif attr["type"] == "number":
-    #    payload += f'"device":{{"identifiers":["{devicename}_number"],"name":"{devicename}"}},'       
-    #else:
-    #    raise ValueError(f"unknown type: {attr['type']}") 
     payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
     payload += '}' 
     return topic, payload
     
     
-class MqttInterface(threading.Thread):
+class MqttDevice(threading.Thread):
     def __init__(self, hostname, port, devicename):
         self.devicename = devicename
         super().__init__()
@@ -57,17 +47,7 @@ class MqttInterface(threading.Thread):
             self.mqttClient.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
             del mqtt_auth
 
-        while True:
-            try:
-                self.mqttClient.connect(hostname, port)
-                break
-            except ConnectionRefusedError:
-                # sleep for 2 minutes if broker is unavailable and retry.
-                time.sleep(120)
-            except OSError:
-                # sleep for 10 minutes if broker is not reachable, i.e. network is down
-                time.sleep(600)
-
+        self.mqttClient.connect(hostname, port)
         self.send_config_message()
         self.mqttClient.loop_start()
         self.start()
@@ -91,9 +71,9 @@ class MqttInterface(threading.Thread):
         if update_sensors:
             any_update = False
             payload = '{'
-            for sensor, attr in entities.items():
+            for entity, attr in entities.items():
                 if attr["type"] == "sensor":        
-                    payload += f'"{sensor}": "{attr["function"]()}",'
+                    payload += f'"{entity}": "{attr["function"]()}",'
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
@@ -104,9 +84,9 @@ class MqttInterface(threading.Thread):
         if update_switches:
             any_update = False
             payload = '{'
-            for sensor, attr in entities.items():
+            for entity, attr in entities.items():
                 if attr["type"] == "switch":        
-                    payload += '"{}": "{}",'.format(sensor, entities[sensor]["value"])
+                    payload += '"{}": "{}",'.format(entity, entities[entity]["value"])
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
@@ -117,9 +97,9 @@ class MqttInterface(threading.Thread):
         if update_numbers:
             any_update = False
             payload = '{'
-            for sensor, attr in entities.items():
+            for entity, attr in entities.items():
                 if attr["type"] == "number":        
-                    payload += '"{}": "{}",'.format(sensor, entities[sensor]["value"])
+                    payload += '"{}": "{}",'.format(entity, entities[entity]["value"])
                     any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
@@ -131,15 +111,15 @@ class MqttInterface(threading.Thread):
     def send_config_message(self):
         logging.info('Sending config message to host...')
 
-        for sensor, attr in entities.items():
+        for entity, attr in entities.items():
             try:
-                topic, payload = make_config_message(self.devicename, sensor, attr)
+                topic, payload = make_config_message(self.devicename, entity, attr)
                 logging.info(f"publish topic: {topic}")
                 logging.info(f"publish payload: {payload}")           
                 self.mqttClient.publish(topic=topic, payload=payload, qos=1, retain=True)          
             
             except Exception as e:
-                logging.warning('An error was produced while processing ' + str(sensor) + ' with exception: ' + str(e))
+                logging.warning('An error was produced while processing ' + str(entity) + ' with exception: ' + str(e))
                 logging.warning(str(settings))
                 raise
             
@@ -184,7 +164,7 @@ if __name__ == '__main__':
     with open("settings.yaml") as f:
         settings = yaml.safe_load(f)
     
-    mqtt_if = MqttInterface(hostname=settings['mqtt']['hostname'],
+    device = MqttDevice(hostname=settings['mqtt']['hostname'],
                             port=settings['mqtt']['port'], 
                             devicename=settings["devicename"])
 
@@ -195,7 +175,7 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     
-    mqtt_if.exit()
+    device.exit()
     logging.info("exiting main")
 
 
