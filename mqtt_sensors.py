@@ -83,13 +83,6 @@ class MqttDevice:
     def set_states(self, states_dict):
         for entity, value in states_dict.items():
             if entity in self._entities:
-                #if value.isnumeric():
-                #    value = int(value)
-                #else:
-                #    try:
-                #        value = float(value)
-                #    except:
-                #        pass
                 if value != self._entities[entity]["value"]:
                     self._entities[entity]["value"] = value
                     self._entities[entity]["value_updated"] = True
@@ -125,9 +118,17 @@ class MqttDevice:
 
     def _on_message(self, client, userdata, message):
         msg = message.payload.decode()
+        msg = message.payload
         logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
         if entity in self._entities:
+            #if value.isnumeric():
+            #    value = int(value)
+            #else:
+            #    try:
+            #        value = float(value)
+            #    except:
+            #        pass
             self.set_states({entity: msg})
             self.publish_updates()  # send confirmation to homeassistant          
         elif message.payload.decode() == 'online':
