@@ -1,7 +1,7 @@
 mqtt:
   hostname: 192.168.178.63  # MQTT broker within home assistant
   port: 1883                # defaults to 1883
-devicename: dev5
+devicename: dev6
 client_id: some_other_client
 update_interval: 10        # Sensor update interval in seconds, e.g. 60
 modbus:
