@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, threading, time, yaml, logging
+import sys, time, yaml, logging
 import paho.mqtt.client as mqtt
 import datetime as dt
 from sensors import entities
@@ -30,18 +30,14 @@ def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
     return topic, payload
     
     
-class MqttDevice(threading.Thread):
+class MqttDevice:
     def __init__(self, hostname, port, devicename):
-        self.devicename = devicename
-        super().__init__()
-        self.exiting = False
-        
+        self.devicename = devicename     
         self.mqttClient = mqtt.Client(client_id=settings['client_id'])
         self.mqttClient.on_connect = self.on_connect                      #attach function to callback
         self.mqttClient.on_message = self.on_message
         self.mqttClient.will_set(f'homeassistant/sensor/{devicename}/availability', 'offline', retain=True)
-        
-        logging.warning("take care of the secrets")
+
         with open('secrets.yaml', 'r') as f:
             mqtt_auth = yaml.safe_load(f)['mqtt_auth']
             self.mqttClient.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
@@ -50,22 +46,14 @@ class MqttDevice(threading.Thread):
         self.mqttClient.connect(hostname, port)
         self.send_config_message()
         self.mqttClient.loop_start()
-        self.start()
     
-    
-    def run(self):
-        while not self.exiting:
-            self.update_states()
-            time.sleep(60)
-
 
     def exit(self):
         logging.info('Exiting MQTT thread and running cleanup code')
         self.mqttClient.publish(f'homeassistant/sensor/{self.devicename}/availability', 'offline', retain=True)
         self.mqttClient.disconnect()
         self.mqttClient.loop_stop()
-        self.exiting = True
-        
+
 
     def update_states(self, update_sensors=True, update_switches=True, update_numbers=True):
         if update_sensors:
@@ -170,13 +158,10 @@ if __name__ == '__main__':
 
     try:
         while True:
-            sys.stdout.flush()
-            time.sleep(60)
+            device.update_states()
+            time.sleep(10)
     except KeyboardInterrupt:
         pass
     
     device.exit()
     logging.info("exiting main")
-
-
-            
