@@ -20,4 +20,4 @@ power_switch:
   type: switch                # switch = data flow: MQTT device <- MQTT broker. 
   name: Power switch          # friendly name that shows up in Home Assitant GUI
   icon: power                 # (optional) Define an MSI icon from https://materialdesignicons.com/
-  value: ON
+  value: true

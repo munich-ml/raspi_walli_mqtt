@@ -71,6 +71,17 @@ class MqttDevice:
                 pub_ret = self.client.publish(topic=topic, payload=payload, qos=1, retain=False)
                 logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")            
     
+    
+    def get_states(self):
+        return {k: v["value"] for k, v in self._entities.items()}
+    
+    
+    def set_states(self, states_dict):
+        for entity, value in states_dict.items():
+            if entity in self._entities:
+                self._entities[entity]["value"] = value
+                self._entities[entity]["value_updated"] = True
+            
                 
     def _publish_config(self):
         for entity, attr in self._entities.items():
@@ -105,12 +116,9 @@ class MqttDevice:
         msg = message.payload.decode()
         logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
-        logging.info(f"entity: {entity}")
         if entity in self._entities:
-            self._entities[entity]["value"] = msg
-            self._entities[entity]["value_updated"] = True
-            self.publish_updates()  # send confirmation
-                    
+            self.set_states({entity: msg})
+            self.publish_updates()  # send confirmation to homeassistant          
         elif message.payload.decode() == 'online':
             logging.info("reconfiguring")
             self._publish_config()
@@ -131,8 +139,7 @@ if __name__ == '__main__':
         while True:
             device.publish_updates()
             time.sleep(settings["update_interval"])
-            device._entities["temperature"]["value"] = random.choice((13.1, 15.7, 21.3, 37.9))
-            device._entities["temperature"]["value_updated"] = True
+            device.set_states({"temperature": random.choice((13.1, 15.7, 21.3, 37.9))})
     except KeyboardInterrupt:
         pass
     
