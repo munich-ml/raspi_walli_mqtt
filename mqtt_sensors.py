@@ -155,7 +155,8 @@ if __name__ == '__main__':
         entities = yaml.safe_load(f)
     
     device = MqttDevice(hostname=settings['mqtt']['hostname'], port=settings['mqtt']['port'], 
-                        devicename=settings["devicename"], client_id=settings['client_id'])
+                        devicename=settings["devicename"], client_id=settings['client_id'],
+                        entities=entities)
     try:
         while True:
             device.update_states()
