@@ -17,8 +17,14 @@ if __name__ == '__main__':
                         entities=entities)
     
     FOLLOW_RATE = 0.1
+    PUBLISH_ALL_INTERVAL = 10
+    last_publish = time.time()
     try:
         while True:
+            if time.time() > last_publish + PUBLISH_ALL_INTERVAL:
+                last_publish = time.time()
+                device.publish_updates(ignore_updated_flag=True)
+                
             stat = device.get_states()
             if stat["power_switch"] == "ON":
                 delta = stat["set_temperature"] - stat["temperature"]
@@ -26,6 +32,7 @@ if __name__ == '__main__':
                 device.set_states({"temperature": new_temperature})
                 device.publish_updates()
             time.sleep(1)
+            
     except KeyboardInterrupt:
         pass
     
