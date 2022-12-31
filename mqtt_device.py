@@ -1,9 +1,6 @@
 #!/usr/bin/env python3
-import time, yaml, logging
+import yaml, logging
 import paho.mqtt.client as mqtt
-
-logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
-                    level=logging.INFO)
 
 
 def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
@@ -73,7 +70,7 @@ class MqttDevice:
                 payload = payload[:-1] + '}'
                 topic = f'homeassistant/{type_}/{self.devicename}/state'
                 pub_ret = self.client.publish(topic=topic, payload=payload, qos=1, retain=False)
-                logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")            
+                logging.debug(f"{pub_ret} from publish(topic={topic}, payload={payload})")            
     
     
     def get_states(self):
@@ -128,46 +125,11 @@ class MqttDevice:
             return value
            
         msg = try_int_float_conversion(message.payload.decode())
-        logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
+        logging.debug(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
         if entity in self._entities:
             self.set_states({entity: msg})
             self.publish_updates()  # send confirmation to homeassistant          
         elif msg == 'online':
-            logging.info("reconfiguring")
+            logging.debug("reconfiguring")
             self._publish_config()
-
-
-if __name__ == '__main__':
-    import random
-    with open("settings.yaml") as f:
-        settings = yaml.safe_load(f)
-
-    with open('entities.yaml', 'r') as f:
-        entities = yaml.safe_load(f)
-    
-    device = MqttDevice(hostname=settings['mqtt']['hostname'], port=settings['mqtt']['port'], 
-                        devicename=settings["devicename"], client_id=settings['client_id'],
-                        entities=entities)
-    
-    FOLLOW_RATE = 0.2
-    
-    try:
-        while True:
-            stat = device.get_states()
-            logging.info(stat)
-            if stat["power_switch"] == "ON":
-                delta = stat["set_temperature"] - stat["temperature"]
-                new_temperature = round(stat["temperature"] + delta * FOLLOW_RATE, 1)
-                device.set_states({"temperature": new_temperature})
-                device.publish_updates()
-            time.sleep(1)
-            #time.sleep(settings["update_interval"])
-            #device.set_states({"temperature": random.choice((13.1, 15.7, 21.3, 37.9)),
-            #                   "set_temperature": random.choice((19, 21.4, 27.9)),
-            #                   "power_switch": random.choice(("OFF", "ON"))})
-    except KeyboardInterrupt:
-        pass
-    
-    device.exit()
-    logging.info("exiting main")
