@@ -15,7 +15,7 @@ set_temperature:
   icon: thermometer           # (optional) Define an MSI icon from https://materialdesignicons.com/
   min: 16
   max: 35
-  values: 23
+  value: 23
 power_switch:
   type: switch                # switch = data flow: MQTT device <- MQTT broker. 
   name: Power switch          # friendly name that shows up in Home Assitant GUI
