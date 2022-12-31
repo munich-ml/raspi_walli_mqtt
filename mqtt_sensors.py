@@ -144,7 +144,7 @@ if __name__ == '__main__':
             device.publish_updates()
             time.sleep(settings["update_interval"])
             device.set_states({"temperature": random.choice((13.1, 15.7, 21.3, 37.9)),
-                               "set_temperature": random.choice((2, 87)),
+                               "set_temperature": random.choice((19, 21.4, 27.9)),
                                "power_switch": random.choice(("OFF", "ON"))})
     except KeyboardInterrupt:
         pass
