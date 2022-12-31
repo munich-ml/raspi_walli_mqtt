@@ -159,7 +159,7 @@ if __name__ == '__main__':
     try:
         while True:
             device.update_states()
-            time.sleep(10)
+            time.sleep(settings["update_interval"])
     except KeyboardInterrupt:
         pass
     
