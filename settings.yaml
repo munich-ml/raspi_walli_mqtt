@@ -1,7 +1,7 @@
 mqtt:
   hostname: 192.168.178.63  # MQTT broker within home assistant
   port: 1883                # defaults to 1883
-devicename: tc2
+devicename: tc3
 client_id: some_other_client
 modbus:
   PORT: '/dev/ttyAMA0'     # Serial port of Modbus interface
