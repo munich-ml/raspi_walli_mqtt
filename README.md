@@ -1,7 +1,7 @@
 Raspberry pi serves connects a Heidelberger wallbox via Modbus and MQTT to home assistant
 
 # MqttDevice
-The [__MqttDevice__](mqtt_device.py) uses the [__Eclipse Paho MQTT Python client library__](https://pypi.org/project/paho-mqtt/) to implement a python client that runs on a __raspberry pi__ and supports [__Home Assistant MQTT Discovery__](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery).
+The [__MqttDevice__](mqtt_device.py) uses the [__Eclipse Paho MQTT Python client library__](https://pypi.org/project/paho-mqtt/) to implement a python client that runs on a __raspberry pi__ and supports [__Home Assistant MQTT Discovery__](https://www.home-assistant.io/integrations/mqtt/#mqtt-discovery). It is inspired by [RPI System sensors](https://github.com/Sennevds/system_sensors).
 
 The number and type of MQTT entities is configurable with a `entities.yaml` file. The following entity types are supported:
 - [__`sensor`__](https://developers.home-assistant.io/docs/core/entity/sensor/) such as a temperature measurement. The data flow is exclusively from the MQTT device to the MQTT broker through the state topic.

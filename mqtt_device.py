@@ -1,7 +1,28 @@
 #!/usr/bin/env python3
-import yaml, logging
+import logging
 import paho.mqtt.client as mqtt
+from ruamel.yaml import YAML
 
+
+class YamlInterface:
+    """Helper class for load and dump yaml files. Preserves comments and quotes.
+    """
+    def __init__(self, filename):
+        self.filename = filename
+        
+        # create a ruamel.yaml object
+        self._yaml = YAML()
+        self._yaml.preserve_quotes = True
+        
+    def load(self):
+        with open(self.filename, 'r') as f:
+            data = self._yaml.load(f)
+        return data
+    
+    def dump(self, data):
+        with open(self.filename, 'w') as f:
+            self._yaml.dump(data, f)
+            
 
 def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
     """Creates MQTT config message (consiting of topic and payload) 
@@ -40,10 +61,9 @@ class MqttDevice:
         self.client._on_message = self._on_message
         self.client.will_set(f'homeassistant/sensor/{devicename}/availability', 'offline', retain=True)
 
-        with open('secrets.yaml', 'r') as f:
-            mqtt_auth = yaml.safe_load(f)['mqtt_auth']
-            self.client.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
-            del mqtt_auth
+        mqtt_auth = YamlInterface(filename='secrets.yaml').load()['mqtt_auth']
+        self.client.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
+        del mqtt_auth
 
         self.client.connect(hostname, port)
         self.client.loop_start()

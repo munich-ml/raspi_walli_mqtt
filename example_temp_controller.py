@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 import yaml, time, logging
-from mqtt_device import MqttDevice
+from mqtt_device import MqttDevice, YamlInterface
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     level=logging.INFO)
 
 if __name__ == '__main__':
-    with open("settings.yaml") as f:
-        settings = yaml.safe_load(f)
+    yaml_settings = YamlInterface(filename="settings.yaml")
+    settings = yaml_settings.load()
 
-    with open('entities_temp_controller.yaml', 'r') as f:
-        entities = yaml.safe_load(f)
+    yaml_entities = YamlInterface(filename='entities_temp_controller.yaml')
+    entities = yaml_entities.load()
     
     def on_message_callback(entity, message):
         device.set_states({entity: message})
