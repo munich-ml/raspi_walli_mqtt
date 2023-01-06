@@ -12,10 +12,25 @@ The number and type of MQTT entities is configurable with a `entities.yaml` file
 The [example_temp_controller.py](example_temp_controller.py) (together with the [entities_temp_controller.yaml](entities_temp_controller.yaml)) is a simple temperature controller application using one entity of each available type. Once started and discoverey by Home Assistant, it looks like this:
 ![imgs/tc_ui.png](imgs/tc_ui.png)
 
+The simulated temperature controller is implemented with the following code block:
+```Python
+while True:
+    stat = device.get_states()
+    if stat["power_switch"] == "ON":
+        delta = stat["set_temperature"] - stat["temperature"]
+        new_temperature = round(stat["temperature"] + delta * FOLLOW_RATE, 1)
+        device.set_states({"temperature": new_temperature})
+        device.publish_updates()
+```
+The (measured) ``temperature`` follows the ``set_temperature`` with a certain `FOLLOW_RATE`.
+
+The graph below shows the temperature controller in action. Note that the `measured temperature` only follows if the `power_switch` is `ON`.
 
 ![imgs/example_history.png](imgs/example_history.png)
 
-
-
+## Publish config
+The MQTT config message is published automatically after instanciating the `MqttDevice` class. 
+`MqttDevice.__init__()` upon connect -> `_publish_config()`
+Debug logging below shows the config messages:
 ![imgs/example_tc_execution.png](imgs/example_tc_execution.png)
 
