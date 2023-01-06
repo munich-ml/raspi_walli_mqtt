@@ -1,6 +1,5 @@
 import logging, threading, time
 from pymodbus.client.sync import ModbusSerialClient
-from smbus import SMBus
 from queue import Queue
 
 

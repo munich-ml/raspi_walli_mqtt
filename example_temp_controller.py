@@ -12,9 +12,16 @@ if __name__ == '__main__':
     with open('entities_temp_controller.yaml', 'r') as f:
         entities = yaml.safe_load(f)
     
-    device = MqttDevice(hostname=settings['mqtt']['hostname'], port=settings['mqtt']['port'], 
-                        devicename=settings["devicename"], client_id=settings['client_id'],
-                        entities=entities)
+    def on_message_callback(entity, message):
+        device.set_states({entity: message})
+        device.publish_updates()  # send confirmation to homeassistant 
+    
+    device = MqttDevice(hostname=settings['mqtt']['hostname'], 
+                        port=settings['mqtt']['port'], 
+                        devicename=settings["devicename"], 
+                        client_id=settings['client_id'],
+                        entities=entities,
+                        on_message_callback=on_message_callback)
     
     FOLLOW_RATE = 0.1
     PUBLISH_ALL_INTERVAL = 10

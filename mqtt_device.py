@@ -29,9 +29,10 @@ def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
     
     
 class MqttDevice:
-    def __init__(self, hostname, port, devicename, client_id, entities):
+    def __init__(self, hostname, port, devicename, client_id, entities, on_message_callback=None):
         self.devicename = devicename     
         self._entities = entities
+        self._on_message_callback = on_message_callback
         for entity in entities.values():
             entity.update({"value_updated": False})
         self.client = mqtt.Client(client_id=client_id)
@@ -127,8 +128,10 @@ class MqttDevice:
         logging.debug(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
         if entity in self._entities:
-            self.set_states({entity: msg})
-            self.publish_updates()  # send confirmation to homeassistant          
+            if self._on_message_callback is not None:
+                self._on_message_callback(entity, msg)
+            else:
+                logging.info(f"No on_message_callback defined, entity={entity}, message={msg}.")         
         elif msg == 'online':
             logging.debug("reconfiguring")
             self._publish_config()
