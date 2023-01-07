@@ -1,8 +1,9 @@
 mqtt:
   hostname: 192.168.178.63  # MQTT broker within home assistant
   port: 1883                # defaults to 1883
-devicename: tc4
+devicename: wb101
 client_id: some_other_client
+update_interval: 10        # Wallbox polling interval in s
 modbus:
   PORT: '/dev/ttyAMA0'     # Serial port of Modbus interface
   BUS_ID: 1                # Modbus ID

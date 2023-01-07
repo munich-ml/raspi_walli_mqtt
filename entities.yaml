@@ -1,0 +1,122 @@
+# MQTT device entities definition file
+# Home Assistant will discover each item (e.g. temperature) as an entity
+charging_state: 
+  type: sensor
+  name: charging state
+  state_class: measurement
+  icon: state-machine 
+I_L1: 
+  type: sensor                # sensor = data flow: MQTT device -> MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/sensor/
+  name: L1 current            # friendly name that shows up in Home Assitant GUI
+  device_class: current       # (optional) Avaliable options: https://developers.home-assistant.io/docs/core/entity/sensor/#available-device-classes 
+  unit: A                     # (optional) Defines the unit_of_measurement in Home Assistant
+  state_class: measurement    # (optional) Avaliable options: https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes
+  icon: current-ac            # (optional) Define an MSI icon from https://materialdesignicons.com/
+I_L2: 
+  type: sensor
+  name: L2 current
+  device_class: current
+  unit: A
+  state_class: measurement
+  icon: current-ac 
+I_L3: 
+  type: sensor
+  name: L3 current
+  device_class: current
+  unit: A
+  state_class: measurement
+  icon: current-ac 
+temperature: 
+  type: sensor
+  name: wallbox PCB temperature
+  device_class: temperature
+  unit: °C
+  state_class: measurement
+  icon: thermometer 
+V_L1: 
+  type: sensor
+  name: L1 voltage
+  device_class: voltage
+  unit: V
+  state_class: measurement
+  icon: sine-wave 
+V_L2: 
+  type: sensor
+  name: L2 voltage
+  device_class: voltage
+  unit: V
+  state_class: measurement
+  icon: sine-wave 
+V_L3: 
+  type: sensor
+  name: L3 voltage
+  device_class: voltage
+  unit: V
+  state_class: measurement
+  icon: sine-wave 
+extern_lock_state: 
+  type: sensor
+  name: external lock state
+  state_class: measurement
+  icon: state-machine 
+power_kW: 
+  type: sensor
+  name: charging power
+  device_class: power
+  unit: kW
+  state_class: measurement
+  icon: flash-triangle 
+energy_pwr_on: 
+  type: sensor
+  name: energy since powerup
+  device_class: power
+  unit: kWh
+  state_class: total
+  icon: battery-charging-full 
+energy_kWh: 
+  type: sensor
+  name: energy total
+  device_class: power
+  unit: kWh
+  state_class: total
+  icon: battery-charging-full 
+I_max_cfg: 
+  type: sensor
+  name: max current HW config
+  device_class: current
+  unit: A
+  state_class: measurement
+  icon: current-ac 
+I_min_cfg: 
+  type: sensor
+  name: min current HW config
+  device_class: current
+  unit: A
+  state_class: measurement
+  icon: current-ac 
+modbus_watchdog_timeout: 
+  type: sensor
+  name: ModBus watchdog timeout
+  device_class: duration
+  unit: s
+  state_class: measurement
+  icon: timer-outline 
+remote_lock: 
+  type: sensor
+  name: remote lock
+  state_class: measurement
+  icon: lock-outline 
+I_max_cmd: 
+  type: sensor
+  name: max current command
+  device_class: current
+  unit: A
+  state_class: measurement
+  icon: sine-wave 
+I_fail_safe: 
+  type: sensor
+  name: FailSafe current
+  device_class: current
+  unit: A
+  state_class: measurement
+  icon: sine-wave 
