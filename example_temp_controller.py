@@ -30,7 +30,7 @@ if __name__ == '__main__':
         while True:
             if time.time() > last_publish + PUBLISH_ALL_INTERVAL:
                 last_publish = time.time()
-                device.publish_updates(publish_all=True)
+                device.publish_updates()
                 
             stat = device.get_states()
             if stat["power_switch"] == "ON":

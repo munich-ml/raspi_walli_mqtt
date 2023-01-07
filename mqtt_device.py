@@ -54,8 +54,6 @@ class MqttDevice:
         self.devicename = devicename     
         self._entities = entities
         self._on_message_callback = on_message_callback
-        for entity in entities.values():
-            entity.update({"value_updated": False})
         self.client = mqtt.Client(client_id=client_id)
         self.client._on_connect = self._on_connect
         self.client._on_message = self._on_message
@@ -76,16 +74,14 @@ class MqttDevice:
         self.client.loop_stop()
 
  
-    def publish_updates(self, publish_all=True):
+    def publish_updates(self):
         for type_ in ("sensor", "switch", "number"):
             any_update = False
             payload = '{'
             for entity, attr in self._entities.items():
                 if attr["type"] == type_:
-                    if publish_all or attr["value_updated"]:
-                        payload += '"{}": "{}",'.format(entity, attr["value"])
-                        attr["value_updated"] = False
-                        any_update = True
+                    payload += '"{}": "{}",'.format(entity, attr["value"])
+                    any_update = True
             if any_update:
                 payload = payload[:-1] + '}'
                 topic = f'homeassistant/{type_}/{self.devicename}/state'
@@ -100,9 +96,7 @@ class MqttDevice:
     def set_states(self, states_dict):
         for entity, value in states_dict.items():
             if entity in self._entities:
-                if value != self._entities[entity]["value"]:
-                    self._entities[entity]["value"] = value
-                    self._entities[entity]["value_updated"] = True
+                self._entities[entity]["value"] = value
             
                 
     def _publish_config(self):
@@ -123,7 +117,6 @@ class MqttDevice:
                 if attrs["type"] in ("switch", "number"):
                     self.client.subscribe(f"homeassistant/{attrs['type']}/{self.devicename}/{entity}")  # subscribe to setters
             self.client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
-            #self.publish_updates()  # send initial sensor values
             
         elif rc == 5:
             logging.info('Authentication failed. Exiting...')
