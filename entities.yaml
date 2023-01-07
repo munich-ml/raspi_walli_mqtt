@@ -5,6 +5,7 @@ charging_state:
   name: charging state
   state_class: measurement
   icon: state-machine 
+  value: 0                    
 I_L1: 
   type: sensor                # sensor = data flow: MQTT device -> MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/sensor/
   name: L1 current            # friendly name that shows up in Home Assitant GUI
@@ -12,6 +13,7 @@ I_L1:
   unit: A                     # (optional) Defines the unit_of_measurement in Home Assistant
   state_class: measurement    # (optional) Avaliable options: https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes
   icon: current-ac            # (optional) Define an MSI icon from https://materialdesignicons.com/
+  value: 0                    # proprietary attribute used as initial value und value variable
 I_L2: 
   type: sensor
   name: L2 current
@@ -19,6 +21,7 @@ I_L2:
   unit: A
   state_class: measurement
   icon: current-ac 
+  value: 0                    
 I_L3: 
   type: sensor
   name: L3 current
@@ -26,6 +29,7 @@ I_L3:
   unit: A
   state_class: measurement
   icon: current-ac 
+  value: 0                    
 temperature: 
   type: sensor
   name: wallbox PCB temperature
@@ -33,6 +37,7 @@ temperature:
   unit: °C
   state_class: measurement
   icon: thermometer 
+  value: 0                    
 V_L1: 
   type: sensor
   name: L1 voltage
@@ -40,6 +45,7 @@ V_L1:
   unit: V
   state_class: measurement
   icon: sine-wave 
+  value: 0                    
 V_L2: 
   type: sensor
   name: L2 voltage
@@ -47,6 +53,7 @@ V_L2:
   unit: V
   state_class: measurement
   icon: sine-wave 
+  value: 0                    
 V_L3: 
   type: sensor
   name: L3 voltage
@@ -54,11 +61,13 @@ V_L3:
   unit: V
   state_class: measurement
   icon: sine-wave 
+  value: 0                    
 extern_lock_state: 
   type: sensor
   name: external lock state
   state_class: measurement
   icon: state-machine 
+  value: 0                    
 power_kW: 
   type: sensor
   name: charging power
@@ -66,6 +75,7 @@ power_kW:
   unit: kW
   state_class: measurement
   icon: flash-triangle 
+  value: 0                    
 energy_pwr_on: 
   type: sensor
   name: energy since powerup
@@ -73,6 +83,7 @@ energy_pwr_on:
   unit: kWh
   state_class: total
   icon: battery-charging-full 
+  value: 0                    
 energy_kWh: 
   type: sensor
   name: energy total
@@ -80,6 +91,7 @@ energy_kWh:
   unit: kWh
   state_class: total
   icon: battery-charging-full 
+  value: 0                    
 I_max_cfg: 
   type: sensor
   name: max current HW config
@@ -87,6 +99,7 @@ I_max_cfg:
   unit: A
   state_class: measurement
   icon: current-ac 
+  value: 0                    
 I_min_cfg: 
   type: sensor
   name: min current HW config
@@ -94,6 +107,7 @@ I_min_cfg:
   unit: A
   state_class: measurement
   icon: current-ac 
+  value: 0                    
 modbus_watchdog_timeout: 
   type: sensor
   name: ModBus watchdog timeout
@@ -101,11 +115,13 @@ modbus_watchdog_timeout:
   unit: s
   state_class: measurement
   icon: timer-outline 
+  value: 0                    
 remote_lock: 
   type: sensor
   name: remote lock
   state_class: measurement
   icon: lock-outline 
+  value: 0                    
 I_max_cmd: 
   type: sensor
   name: max current command
@@ -113,6 +129,7 @@ I_max_cmd:
   unit: A
   state_class: measurement
   icon: sine-wave 
+  value: 0                    
 I_fail_safe: 
   type: sensor
   name: FailSafe current
@@ -120,3 +137,4 @@ I_fail_safe:
   unit: A
   state_class: measurement
   icon: sine-wave 
+  value: 0                    

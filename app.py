@@ -20,6 +20,10 @@ class CaptureTimer:
         self.__timer.join()
         self.__start_timer()
         
+    def exit(self):
+        self.__timer.cancel()
+        self.__timer.join()        
+        
     def __start_timer(self):
         now = time.time()
         sleep_time = math.ceil(now / self.__interval) * self.__interval - now        
@@ -78,5 +82,6 @@ if __name__ == "__main__":
     
     wb.exit()
     device.exit()
+    timer.exit()
     logging.info("exiting main")
     
