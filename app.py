@@ -43,10 +43,10 @@ if __name__ == "__main__":
     
     def on_message_callback(entity, message):
         logging.info(f"{entity}, {message}")
-        device.set_states({entity: message})
-        device.publish_updates()  # send confirmation to homeassistant 
+        mqtt.set_states({entity: message})
+        mqtt.publish_updates()  # send confirmation to homeassistant 
     
-    device = MqttDevice(hostname=settings['mqtt']['hostname'], 
+    mqtt = MqttDevice(hostname=settings['mqtt']['hostname'], 
                         port=settings['mqtt']['port'], 
                         devicename=settings["devicename"], 
                         client_id=settings['client_id'],
@@ -62,8 +62,8 @@ if __name__ == "__main__":
         """Callback function executed after wallbox capture to process the return data.
         """
         logging.debug("after capture: " + str(data))
-        device.set_states(data)
-        device.publish_updates(publish_all=True)
+        mqtt.set_states(data)
+        mqtt.publish_updates()
         
     
     def do_capture():
@@ -80,7 +80,7 @@ if __name__ == "__main__":
         pass
     
     wb.exit()
-    device.exit()
+    mqtt.exit()
     timer.exit()
     logging.info("exiting main")
     

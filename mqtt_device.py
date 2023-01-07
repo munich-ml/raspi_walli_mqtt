@@ -76,7 +76,7 @@ class MqttDevice:
         self.client.loop_stop()
 
  
-    def publish_updates(self, publish_all=False):
+    def publish_updates(self, publish_all=True):
         for type_ in ("sensor", "switch", "number"):
             any_update = False
             payload = '{'
@@ -123,7 +123,7 @@ class MqttDevice:
                 if attrs["type"] in ("switch", "number"):
                     self.client.subscribe(f"homeassistant/{attrs['type']}/{self.devicename}/{entity}")  # subscribe to setters
             self.client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
-            self.publish_updates(publish_all=True)  # send initial sensor values
+            #self.publish_updates()  # send initial sensor values
             
         elif rc == 5:
             logging.info('Authentication failed. Exiting...')
