@@ -63,7 +63,7 @@ if __name__ == "__main__":
         """
         logging.debug("after capture: " + str(data))
         device.set_states(data)
-        device.publish_updates()
+        device.publish_updates(publish_all=True)
         
     
     def do_capture():
