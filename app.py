@@ -41,17 +41,18 @@ if __name__ == "__main__":
 
     entities = YamlInterface(ENTITIES).load()
     
-    def on_message_callback(entity, message):
+    def do_write(entity, message, timeout=None):
         logging.info(f"{entity}, {message}")
-        mqtt.set_states({entity: message})
+        #mqtt.set_states({entity: message})
         mqtt.publish_updates()  # send confirmation to homeassistant 
+        
     
     mqtt = MqttDevice(hostname=settings['mqtt']['hostname'], 
                         port=settings['mqtt']['port'], 
                         devicename=settings["devicename"], 
                         client_id=settings['client_id'],
                         entities=entities,
-                        on_message_callback=on_message_callback)    
+                        on_message_callback=do_write)    
     
     wb = Wallbox(port=settings["modbus"]["PORT"],
                  bus_id=settings["modbus"]["BUS_ID"],
