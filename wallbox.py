@@ -110,7 +110,7 @@ class Wallbox(threading.Thread):
             "energy_kWh": ((int(raw["E_hb"]) << 16) + raw["E_lb"]) / 1000.,
             "I_max_cfg": int(raw["I_max"]),
             "I_min_cfg": int(raw["I_max"]),
-            "modbus_watchdog_timeout": int(raw["watchdog"]),
+            "modbus_watchdog_timeout": raw["watchdog"] / 1000.,
             "remote_lock": int(raw["remote_lock"]),
             "I_max_cmd": raw["max_I_cmd"] / 10.,
             "I_fail_safe": raw["FailSafe_I"] / 10., 
