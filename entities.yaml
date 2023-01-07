@@ -82,7 +82,7 @@ energy_pwr_on:
   device_class: power
   unit: kWh
   state_class: total
-  icon: battery-charging-full 
+  icon: battery-charging 
   value: 0                    
 energy_kWh: 
   type: sensor
@@ -90,7 +90,7 @@ energy_kWh:
   device_class: power
   unit: kWh
   state_class: total
-  icon: battery-charging-full 
+  icon: battery-charging
   value: 0                    
 I_max_cfg: 
   type: sensor

@@ -6,7 +6,7 @@ SETTINGS = 'settings.yaml'
 ENTITIES = 'entities.yaml'
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
-                    level=logging.DEBUG)
+                    level=logging.INFO)
 
 class CaptureTimer:
     def __init__(self, interval, function):
@@ -61,13 +61,13 @@ if __name__ == "__main__":
     def after_capture(data: dict):
         """Callback function executed after wallbox capture to process the return data.
         """
-        logging.debug("after capture: " + str(data)[:30])
+        logging.info("after capture: " + str(data))
         device.set_states(data)
         device.publish_updates()
         
     
     def do_capture():
-        logging.debug("putting capture task")
+        logging.info("putting capture task")
         task = {"func": "capture", "callback": after_capture}
         wb.task_queue.put_nowait(task)
 
