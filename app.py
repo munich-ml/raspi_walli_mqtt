@@ -61,13 +61,12 @@ if __name__ == "__main__":
     def after_capture(data: dict):
         """Callback function executed after wallbox capture to process the return data.
         """
-        logging.info("after capture: " + str(data))
+        logging.debug("after capture: " + str(data))
         device.set_states(data)
         device.publish_updates()
         
     
     def do_capture():
-        logging.info("putting capture task")
         task = {"func": "capture", "callback": after_capture}
         wb.task_queue.put_nowait(task)
 

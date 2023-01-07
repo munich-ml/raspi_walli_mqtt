@@ -90,7 +90,7 @@ class MqttDevice:
                 payload = payload[:-1] + '}'
                 topic = f'homeassistant/{type_}/{self.devicename}/state'
                 pub_ret = self.client.publish(topic=topic, payload=payload, qos=1, retain=False)
-                logging.debug(f"{pub_ret} from publish(topic={topic}, payload={payload})")            
+                logging.info(f"{pub_ret} from publish(topic={topic}, payload={payload})")            
     
     
     def get_states(self):
