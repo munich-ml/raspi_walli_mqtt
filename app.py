@@ -10,12 +10,12 @@ logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(fil
 
 class CaptureTimer:
     def __init__(self, interval, function):
-        self.__interval = interval
+        self.__interval = int(interval)
         self.__function = function
         self.__start_timer()
         
     def update_interval(self, interval):
-        self.__interval = interval
+        self.__interval = int(interval)
         self.__timer.cancel()
         self.__timer.join()
         self.__start_timer()
@@ -64,10 +64,12 @@ if __name__ == "__main__":
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}
             wb.task_queue.put_nowait(task)        
-        else:
+        else:   # for entities within this app
             entities = entities_interface.load()
             entities[entity]["value"] = value
             entities_interface.dump(entities)
+            if entity == "polling_interval":
+                timer.update_interval(value)
     
     
     def after_write(return_value=None):
@@ -81,11 +83,11 @@ if __name__ == "__main__":
     entities_interface = YamlInterface(ENTITIES)
     
     settings = settings_interface.load()
-    mqtt = MqttDevice(entities=entities_interface.load(),
-                      on_message_callback=do_write,
+    mqtt = MqttDevice(entities=entities_interface.load(), on_message_callback=do_write,
                       **settings['mqtt'])    
     wb = Wallbox(**settings["modbus"])
-    timer = CaptureTimer(settings["update_interval"], do_capture)
+    timer = CaptureTimer(interval=entities_interface.load()["polling_interval"]["value"], 
+                         function=do_capture)
         
     try:
         while True:
