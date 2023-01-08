@@ -54,7 +54,7 @@ if __name__ == "__main__":
         
         mqtt.set_states(entities)
         mqtt.publish_updates()
-        logging.info("after capture: " + str(entities))
+        logging.debug(f"after capture: {entities}"))
         
     
     def do_write(entity, value, timeout=None):
