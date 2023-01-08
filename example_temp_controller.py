@@ -1,25 +1,22 @@
 #!/usr/bin/env python3
-import yaml, time, logging
+import time, logging
 from mqtt_device import MqttDevice, YamlInterface
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     level=logging.INFO)
 
 if __name__ == '__main__':
-    yaml_settings = YamlInterface(filename="settings.yaml")
-    settings = yaml_settings.load()
+    settings_interface = YamlInterface(filename="settings_temp_controller.yaml")
+    settings = settings_interface.load()
 
-    yaml_entities = YamlInterface(filename='entities_temp_controller.yaml')
-    entities = yaml_entities.load()
+    entities_interface = YamlInterface(filename='entities_temp_controller.yaml')
+    entities = entities_interface.load()
     
     def on_message_callback(entity, message):
         device.set_states({entity: message})
         device.publish_updates()  # send confirmation to homeassistant 
     
-    device = MqttDevice(hostname=settings['mqtt']['hostname'], 
-                        port=settings['mqtt']['port'], 
-                        devicename=settings["devicename"], 
-                        client_id=settings['client_id'],
+    device = MqttDevice(**settings["mqtt"],
                         entities=entities,
                         on_message_callback=on_message_callback)
     
