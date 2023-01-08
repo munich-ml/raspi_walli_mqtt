@@ -42,8 +42,14 @@ if __name__ == "__main__":
     entities = YamlInterface(ENTITIES).load()
     
     def do_write(entity, value, timeout=None):
-        task = {"func": "write", "kwargs": {"entity": entity, "value": value}, "callback": do_capture}
+        task = {"func": "write", "kwargs": {"entity": entity, "value": value}, "callback": after_write}
         wb.task_queue.put_nowait(task)        
+    
+    
+    def after_write(return_value=None):
+        WALLBOX_RESPONSE_TIME = 0.1
+        time.sleep(WALLBOX_RESPONSE_TIME)
+        do_capture()
         
     
     mqtt = MqttDevice(hostname=settings['mqtt']['hostname'], 
@@ -66,14 +72,12 @@ if __name__ == "__main__":
         mqtt.publish_updates()
         
     
-    def do_capture(dummy=None):
+    def do_capture():
         """Puts a capture task into the wallbox task queue. 
-
-        Args:
-            dummy (optional): Required as dummy when executed as callback from the wallbox
         """
         task = {"func": "capture", "callback": after_capture}
         wb.task_queue.put_nowait(task)
+
 
     timer = CaptureTimer(settings["update_interval"], do_capture)
     
