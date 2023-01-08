@@ -17,6 +17,7 @@ push_button:
   type: button                #  
   name: Push button           # friendly name that shows up in Home Assitant GUI
   icon: gesture-tap-button    # (optional) Define an MSI icon from https://materialdesignicons.com/
+  value: 0
 set_temperature:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
   name: Set temperature       # friendly name that shows up in Home Assitant GUI
