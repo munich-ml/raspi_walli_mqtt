@@ -39,7 +39,7 @@ class Wallbox(threading.Thread):
                     kwargs = {}
                 
                 try:
-                    func(**kwargs)
+                    return_dct = func(**kwargs)
                 except Exception as e:
                     logging.error(f"task {task} caused '{e}'")
                     task["callback"]({"rc": f"Exception during {task}"})
@@ -47,7 +47,7 @@ class Wallbox(threading.Thread):
                 
                 if "callback" in task:
                     try: 
-                        task["callback"]()
+                        task["callback"](return_dct)
                     except Exception as e:
                         logging.error(e)
                     
@@ -161,7 +161,8 @@ class Wallbox(threading.Thread):
     
 
     def _reg_write(self, adr: str, val: int):
-        self.mb.write_register(int(adr), int(val), unit=self.bus_id)       
+        self.mb.write_register(int(adr), int(val), unit=self.bus_id)  
+        return {}     
     
 
     def exit(self):
