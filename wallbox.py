@@ -111,7 +111,7 @@ class Wallbox(threading.Thread):
             "I_max_cfg": int(raw["I_max"]),
             "I_min_cfg": int(raw["I_max"]),
             "modbus_watchdog_timeout": raw["watchdog"] / 1000.,
-            "remote_lock": int(raw["remote_lock"]),
+            "remote_lock": {1: "ON", 0: "OFF"}[(raw["remote_lock"])],
             "I_max_cmd": raw["max_I_cmd"] / 10.,
             "I_fail_safe": raw["FailSafe_I"] / 10., 
         }
@@ -122,7 +122,7 @@ class Wallbox(threading.Thread):
         if entity == "modbus_watchdog_timeout":
             adr, val = 257, int(value * 1000)
         elif entity == "remote_lock":
-            adr, val = 259, value
+            adr, val = 259, {"ON": 1, "OFF": 0}[value]
         elif entity == "I_max_cmd":
             adr, val = 261, int(value * 10)
         elif entity == "I_fail_safe":

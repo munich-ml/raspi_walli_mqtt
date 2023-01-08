@@ -61,7 +61,7 @@ if __name__ == "__main__":
     def after_capture(data: dict):
         """Callback function executed after wallbox capture to process the return data.
         """
-        logging.debug("after capture: " + str(data))
+        logging.info("after capture: " + str(data))
         mqtt.set_states(data)
         mqtt.publish_updates()
         

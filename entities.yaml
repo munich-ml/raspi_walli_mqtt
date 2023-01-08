@@ -117,12 +117,11 @@ modbus_watchdog_timeout:
   max: 65.535                 # (optional) Maximum value (defaults to 99)
   step: 0.001                 # (optional) Step size (defaults to 1)
   value: 0                    # proprietary attribute used as initial value und value variable 
-remote_lock: 
-  type: sensor
-  name: remote lock
-  state_class: measurement
-  icon: lock-outline 
-  value: 0                      
+remote_lock:
+  type: switch                # switch = data flow: MQTT device <- MQTT broker. 
+  name: Power switch          # friendly name that shows up in Home Assitant GUI
+  icon: lock-outline          # (optional) Define an MSI icon from https://materialdesignicons.com/
+  value: "ON"                 # proprietary attribute used as initial value und value variable                    
 I_max_cmd:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
   name: max current command   # friendly name that shows up in Home Assitant GUI
