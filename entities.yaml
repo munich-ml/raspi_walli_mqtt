@@ -117,9 +117,9 @@ modbus_watchdog_timeout:
   max: 65.535                 # (optional) Maximum value (defaults to 99)
   step: 0.001                 # (optional) Step size (defaults to 1)
   value: 0                    # proprietary attribute used as initial value und value variable 
-remote_lock:
+remote_enable:
   type: switch                # switch = data flow: MQTT device <- MQTT broker. 
-  name: Remote lock           # friendly name that shows up in Home Assitant GUI
+  name: Remote enable         # friendly name that shows up in Home Assitant GUI
   icon: lock-outline          # (optional) Define an MSI icon from https://materialdesignicons.com/
   value: "ON"                 # proprietary attribute used as initial value und value variable                    
 I_max_cmd:

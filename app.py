@@ -42,7 +42,10 @@ if __name__ == "__main__":
     entities = YamlInterface(ENTITIES).load()
     
     def do_write(entity, value, timeout=None):
-        task = {"func": "write", "kwargs": {"entity": entity, "value": value}, "callback": after_write}
+        """Puts a write task into the wallbox task queue. 
+        """
+        task = {"func": "write", "callback": after_write, 
+                "kwargs": {"entity": entity, "value": value}}
         wb.task_queue.put_nowait(task)        
     
     
@@ -53,11 +56,11 @@ if __name__ == "__main__":
         
     
     mqtt = MqttDevice(hostname=settings['mqtt']['hostname'], 
-                        port=settings['mqtt']['port'], 
-                        devicename=settings["devicename"], 
-                        client_id=settings['client_id'],
-                        entities=entities,
-                        on_message_callback=do_write)    
+                      port=settings['mqtt']['port'], 
+                      devicename=settings["devicename"], 
+                      client_id=settings['client_id'],
+                      entities=entities,
+                      on_message_callback=do_write)    
     
     wb = Wallbox(port=settings["modbus"]["PORT"],
                  bus_id=settings["modbus"]["BUS_ID"],

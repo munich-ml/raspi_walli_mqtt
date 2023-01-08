@@ -91,7 +91,7 @@ class Wallbox(threading.Thread):
         
         keys = ['ver', 'charge_state', 'I_L1', 'I_L2', 'I_L3', 'Temp', 'V_L1', 'V_L2', 
                 'V_L3', 'ext_lock', 'P', 'E_cyc_hb', 'E_cyc_lb', 'E_hb', 'E_lb', 'I_max', 'I_min', 
-                'watchdog', 'standby', 'remote_lock', 'max_I_cmd', 'FailSafe_I']
+                'watchdog', 'standby', 'remote_enable', 'max_I_cmd', 'FailSafe_I']
         raw = {k: v for k, v in zip(keys, regs)}
         
         # step 2: Preprocess registers
@@ -111,7 +111,7 @@ class Wallbox(threading.Thread):
             "I_max_cfg": int(raw["I_max"]),
             "I_min_cfg": int(raw["I_max"]),
             "modbus_watchdog_timeout": raw["watchdog"] / 1000.,
-            "remote_lock": {1: "ON", 0: "OFF"}[(raw["remote_lock"])],
+            "remote_enable": {1: "ON", 0: "OFF"}[(raw["remote_enable"])],
             "I_max_cmd": raw["max_I_cmd"] / 10.,
             "I_fail_safe": raw["FailSafe_I"] / 10., 
         }
@@ -119,9 +119,11 @@ class Wallbox(threading.Thread):
         
         
     def write(self, entity, value):
+        """Convert Home Assitant entity to Modbus register and do the write.
+        """
         if entity == "modbus_watchdog_timeout":
             adr, val = 257, int(value * 1000)
-        elif entity == "remote_lock":
+        elif entity == "remote_enable":
             adr, val = 259, {"ON": 1, "OFF": 0}[value]
         elif entity == "I_max_cmd":
             adr, val = 261, int(value * 10)
