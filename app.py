@@ -64,12 +64,14 @@ if __name__ == "__main__":
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}
             wb.task_queue.put_nowait(task)        
-        else:   # for entities within this app
+            
+        else:                             # for entities within this app
             entities = entities_interface.load()
             entities[entity]["value"] = value
             entities_interface.dump(entities)
             if entity == "polling_interval":
                 timer.update_interval(value)
+            after_write()
     
     
     def after_write(return_value=None):
