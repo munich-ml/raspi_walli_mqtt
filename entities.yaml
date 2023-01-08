@@ -119,12 +119,12 @@ modbus_watchdog_timeout:
   value: 0                    # proprietary attribute used as initial value und value variable 
 remote_lock:
   type: switch                # switch = data flow: MQTT device <- MQTT broker. 
-  name: Power switch          # friendly name that shows up in Home Assitant GUI
+  name: Remote lock           # friendly name that shows up in Home Assitant GUI
   icon: lock-outline          # (optional) Define an MSI icon from https://materialdesignicons.com/
   value: "ON"                 # proprietary attribute used as initial value und value variable                    
 I_max_cmd:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
-  name: max current command   # friendly name that shows up in Home Assitant GUI
+  name: Max current command   # friendly name that shows up in Home Assitant GUI
   unit: A                     # (optional) Defines the unit_of_measurement in Home Assistant
   icon: current-ac            # (optional) Define an MSI icon from https://materialdesignicons.com/
   min: 0                      # (optional) Minimum value (defaults to 1)
