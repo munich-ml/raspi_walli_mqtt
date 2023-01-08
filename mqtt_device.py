@@ -32,12 +32,13 @@ def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
     payload += f'"device_class":"{attr["device_class"]}",' if 'device_class' in attr else ''
     payload += f'"state_class":"{attr["state_class"]}",' if 'state_class' in attr else ''
     payload += f'"name":"{devicename} {attr["name"]}",'
-    payload += f'"state_topic":"homeassistant/{attr["type"]}/{devicename}/state",'
-    if attr["type"] in ("switch", "number"):
+    if attr["type"] != "button":
+        payload += f'"state_topic":"homeassistant/{attr["type"]}/{devicename}/state",'
+        payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
+        payload += f'"value_template":"{{{{value_json.{entity}}}}}",'
+    if attr["type"] in ("switch", "number", "button"):
         payload += f'"command_topic":"homeassistant/{attr["type"]}/{devicename}/{entity}",'
-    payload += f'"availability_topic":"homeassistant/sensor/{devicename}/availability",'
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
-    payload += f'"value_template":"{{{{value_json.{entity}}}}}",'
     payload += f'"unique_id":"{devicename}_{entity}",'
     if attr["type"] == "number":
         payload += f'"min":"{attr["min"]}",' if 'min' in attr else ''
@@ -138,7 +139,7 @@ class MqttDevice:
             return value
            
         msg = try_int_float_conversion(message.payload.decode())
-        logging.debug(f"Message received: topic='{message.topic}', message='{msg}'")
+        logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
         if entity in self._entities:
             if self._on_message_callback is not None:
