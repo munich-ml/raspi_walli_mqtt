@@ -59,7 +59,7 @@ if __name__ == "__main__":
                     "kwargs": {"entity": entity, "value": value}}
             wb.task_queue.put_nowait(task)        
         else:
-            logging.error(entity, value)
+            logging.error(f"{entity}, {value}")
     
     
     def after_write(return_value=None):
