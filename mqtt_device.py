@@ -115,7 +115,7 @@ class MqttDevice:
             self._publish_config()
             self.client.subscribe(f"homeassistant/sensor/{self.devicename}/command") #subscribe
             for entity, attrs in self._entities.items():
-                if attrs["type"] in ("switch", "number"):
+                if attrs["type"] in ("switch", "number", "button"):
                     self.client.subscribe(f"homeassistant/{attrs['type']}/{self.devicename}/{entity}")  # subscribe to setters
             self.client.publish(f"homeassistant/sensor/{self.devicename}/command", "setup", retain=True)
             
