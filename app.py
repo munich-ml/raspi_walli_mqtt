@@ -47,7 +47,7 @@ if __name__ == "__main__":
         """Callback function executed after wallbox capture to process the return data.
         """
         # load yaml entities (e.g. for polling_interval)
-        entities = {e: v["value"] for e, v in yaml_entities.load().items()}  
+        entities = {e: v["value"] for e, v in entities_interface.load().items()}  
         
         # update yaml entities with the values from the Wallbox read
         entities.update(data) 
@@ -60,12 +60,14 @@ if __name__ == "__main__":
     def do_write(entity, value, timeout=None):
         """Puts a write task into the wallbox task queue. 
         """
-        if entity in wb.WRITEABLE_REGS:
+        if entity in wb.WRITEABLE_REGS:   # for entities within the Wallbox
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}
             wb.task_queue.put_nowait(task)        
         else:
-            logging.error(f"{entity}, {value}")
+            entities = entities_interface.load()
+            entities[entity]["value"] = value
+            entities_interface.dump(entities)
     
     
     def after_write(return_value=None):
@@ -75,11 +77,11 @@ if __name__ == "__main__":
         do_capture()
 
 
-    yaml_settings = YamlInterface(SETTINGS)
-    yaml_entities = YamlInterface(ENTITIES)
+    settings_interface = YamlInterface(SETTINGS)
+    entities_interface = YamlInterface(ENTITIES)
     
-    settings = yaml_settings.load()
-    mqtt = MqttDevice(entities=yaml_entities.load(),
+    settings = settings_interface.load()
+    mqtt = MqttDevice(entities=entities_interface.load(),
                       on_message_callback=do_write,
                       **settings['mqtt'])    
     wb = Wallbox(**settings["modbus"])
