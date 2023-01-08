@@ -107,15 +107,16 @@ I_min_cfg:
   unit: A
   state_class: measurement
   icon: current-ac 
-  value: 0                    
+  value: 0                               
 modbus_watchdog_timeout: 
-  type: sensor
-  name: ModBus watchdog timeout
-  device_class: duration
-  unit: s
-  state_class: measurement
-  icon: timer-outline 
-  value: 0                    
+  type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
+  name: ModBus watchdog timeout   # friendly name that shows up in Home Assitant GUI
+  unit: s                     # (optional) Defines the unit_of_measurement in Home Assistant
+  icon: timer-outline         # (optional) Define an MSI icon from https://materialdesignicons.com/
+  min: 0                      # (optional) Minimum value (defaults to 1)
+  max: 65.535                 # (optional) Maximum value (defaults to 99)
+  step: 0.001                 # (optional) Step size (defaults to 1)
+  value: 0                    # proprietary attribute used as initial value und value variable 
 remote_lock: 
   type: sensor
   name: remote lock
