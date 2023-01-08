@@ -39,7 +39,7 @@ class Wallbox(threading.Thread):
                     kwargs = {}
                 
                 try:
-                    return_dct = func(**kwargs)
+                    func(**kwargs)
                 except Exception as e:
                     logging.error(f"task {task} caused '{e}'")
                     task["callback"]({"rc": f"Exception during {task}"})
@@ -47,7 +47,7 @@ class Wallbox(threading.Thread):
                 
                 if "callback" in task:
                     try: 
-                        task["callback"](return_dct)
+                        task["callback"]()
                     except Exception as e:
                         logging.error(e)
                     
