@@ -95,18 +95,8 @@ class Wallbox(threading.Thread):
         raw = {k: v for k, v in zip(keys, regs)}
         
         # step 2: Preprocess registers
-        charging_state = {2: "car unplugged, wallbox locked",
-                          3: "car unplugged, wallbox unlocked",
-                          4: "car plugged, wallbox locked",
-                          5: "car plugged, wallbox unlocked",
-                          6: "charging requested, wallbox locked",
-                          7: "charging requested, wallbox unlocked",
-                          8: "derating",
-                          9: "Error 9",
-                          10: "Error 10",
-                          11: "Error 11"}[int(raw["charge_state"])]
         dct = {
-            "charging_state": charging_state, 
+            "charging_state": int(raw["charge_state"]), 
             "I_L1": raw["I_L1"] / 10.,
             "I_L2": raw["I_L2"] / 10.,
             "I_L3": raw["I_L3"] / 10.,
