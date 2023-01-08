@@ -66,7 +66,7 @@ if __name__ == "__main__":
         mqtt.publish_updates()
         
     
-    def do_capture():
+    def do_capture(dummy=None):
         task = {"func": "capture", "callback": after_capture}
         wb.task_queue.put_nowait(task)
 
