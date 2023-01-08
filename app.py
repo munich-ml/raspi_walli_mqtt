@@ -36,10 +36,20 @@ class CaptureTimer:
         
 
 if __name__ == "__main__":
-    yaml_settings = YamlInterface(SETTINGS)
-    settings = yaml_settings.load()
+    def do_capture():
+        """Puts a capture task into the wallbox task queue. 
+        """
+        task = {"func": "capture", "callback": after_capture}
+        wb.task_queue.put_nowait(task)
 
-    entities = YamlInterface(ENTITIES).load()
+
+    def after_capture(data: dict):
+        """Callback function executed after wallbox capture to process the return data.
+        """
+        logging.info("after capture: " + str(data))
+        mqtt.set_states(data)
+        mqtt.publish_updates()
+        
     
     def do_write(entity, value, timeout=None):
         """Puts a write task into the wallbox task queue. 
@@ -50,38 +60,25 @@ if __name__ == "__main__":
     
     
     def after_write(return_value=None):
-        WALLBOX_RESPONSE_TIME = 0.1
-        time.sleep(WALLBOX_RESPONSE_TIME)
+        """Callback function executed after wallbox capture to process the return data.
+        """
+        time.sleep(0.2)  # wait a little to allow the wallbox doing the changes
         do_capture()
-        
+
+
+    yaml_settings = YamlInterface(SETTINGS)
+    settings = yaml_settings.load()
+
+    entities = YamlInterface(ENTITIES).load()
     
-    mqtt = MqttDevice(hostname=settings['mqtt']['hostname'], 
-                      port=settings['mqtt']['port'], 
-                      devicename=settings["devicename"], 
-                      client_id=settings['client_id'],
-                      entities=entities,
-                      on_message_callback=do_write)    
+    mqtt = MqttDevice(entities=entities,
+                      on_message_callback=do_write,
+                      **settings['mqtt'])    
     
     wb = Wallbox(**settings["modbus"])
     
-    
-    def after_capture(data: dict):
-        """Callback function executed after wallbox capture to process the return data.
-        """
-        logging.info("after capture: " + str(data))
-        mqtt.set_states(data)
-        mqtt.publish_updates()
-        
-    
-    def do_capture():
-        """Puts a capture task into the wallbox task queue. 
-        """
-        task = {"func": "capture", "callback": after_capture}
-        wb.task_queue.put_nowait(task)
-
-
     timer = CaptureTimer(settings["update_interval"], do_capture)
-    
+        
     try:
         while True:
             time.sleep(1)
