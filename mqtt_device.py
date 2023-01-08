@@ -40,10 +40,9 @@ def make_config_message(devicename: str, entity: str, attr: dict) -> tuple:
         payload += f'"command_topic":"homeassistant/{attr["type"]}/{devicename}/{entity}",'
     payload += f'"unit_of_measurement":"{attr["unit"]}",' if 'unit' in attr else ''
     payload += f'"unique_id":"{devicename}_{entity}",'
-    if attr["type"] == "number":
-        payload += f'"min":"{attr["min"]}",' if 'min' in attr else ''
-        payload += f'"max":"{attr["max"]}",' if 'max' in attr else ''
-        payload += f'"step":"{attr["step"]}",' if 'step' in attr else ''    
+    payload += f'"min":"{attr["min"]}",' if 'min' in attr else ''
+    payload += f'"max":"{attr["max"]}",' if 'max' in attr else ''
+    payload += f'"step":"{attr["step"]}",' if 'step' in attr else ''    
     payload += f'"device":{{"identifiers":["{devicename}"],"name":"{devicename}"}},'
     payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
     payload += '}' 
@@ -139,7 +138,7 @@ class MqttDevice:
             return value
            
         msg = try_int_float_conversion(message.payload.decode())
-        logging.info(f"Message received: topic='{message.topic}', message='{msg}'")
+        logging.debug(f"Message received: topic='{message.topic}', message='{msg}'")
         entity = str(message.topic).split("/")[-1]
         if entity in self._entities:
             if self._on_message_callback is not None:
