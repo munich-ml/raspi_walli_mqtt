@@ -2,7 +2,7 @@
 # Home Assistant will discover each item (e.g. temperature) as an entity
 charging_state: 
   type: sensor
-  name: charging state
+  name: Charging state
   state_class: measurement
   icon: state-machine 
   value: 0                    
@@ -64,13 +64,13 @@ V_L3:
   value: 0                    
 extern_lock_state: 
   type: sensor
-  name: external lock state
+  name: External lock state
   state_class: measurement
   icon: state-machine 
   value: 0                    
 power_kW: 
   type: sensor
-  name: charging power
+  name: Charging power
   device_class: power
   unit: kW
   state_class: measurement
@@ -80,7 +80,7 @@ power_kW:
   value: 0                    
 energy_pwr_on: 
   type: sensor
-  name: energy since powerup
+  name: Energy since powerup
   device_class: power
   unit: kWh
   state_class: total
@@ -88,7 +88,7 @@ energy_pwr_on:
   value: 0                    
 energy_kWh: 
   type: sensor
-  name: energy total
+  name: Energy total
   device_class: power
   unit: kWh
   state_class: total
@@ -96,7 +96,7 @@ energy_kWh:
   value: 0                    
 I_max_cfg: 
   type: sensor
-  name: max current HW config
+  name: Max current HW config
   device_class: current
   unit: A
   state_class: measurement
@@ -104,7 +104,7 @@ I_max_cfg:
   value: 0                    
 I_min_cfg: 
   type: sensor
-  name: min current HW config
+  name: Min current HW config
   device_class: current
   unit: A
   state_class: measurement
