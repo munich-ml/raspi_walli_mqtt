@@ -117,21 +117,16 @@ class Wallbox(threading.Thread):
         }
         return dct
         
-        
+    WRITEABLE_REGS = {"modbus_watchdog_timeout": (257, "int(value * 1000)"),
+                      "remote_enable":           (259, "{'ON': 1, 'OFF': 0}[value]"),
+                      "I_max_cmd":               (261, "int(value * 10)"),
+                      "I_fail_safe":             (262, "int(value * 10)")}    
+
     def write(self, entity, value):
         """Convert Home Assitant entity to Modbus register and do the write.
         """
-        if entity == "modbus_watchdog_timeout":
-            adr, val = 257, int(value * 1000)
-        elif entity == "remote_enable":
-            adr, val = 259, {"ON": 1, "OFF": 0}[value]
-        elif entity == "I_max_cmd":
-            adr, val = 261, int(value * 10)
-        elif entity == "I_fail_safe":
-            adr, val = 262, int(value * 10)
-        else:
-            logging.error(f"Unknown entity {entity} with value {value}")
-        self._reg_write(adr, val)
+        adr, equasion = self.WRITEABLE_REGS[entity]
+        self._reg_write(adr, eval(equasion))
             
         
     def _reg_read(self, input_regs: list, holding_regs: list) -> dict[str, list[tuple[str, int]]]:

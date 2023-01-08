@@ -54,9 +54,12 @@ if __name__ == "__main__":
     def do_write(entity, value, timeout=None):
         """Puts a write task into the wallbox task queue. 
         """
-        task = {"func": "write", "callback": after_write, 
-                "kwargs": {"entity": entity, "value": value}}
-        wb.task_queue.put_nowait(task)        
+        if entity in wb.WRITEABLE_REGS:
+            task = {"func": "write", "callback": after_write, 
+                    "kwargs": {"entity": entity, "value": value}}
+            wb.task_queue.put_nowait(task)        
+        else:
+            logging.error(entity, value)
     
     
     def after_write(return_value=None):
