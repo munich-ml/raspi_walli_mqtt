@@ -3,7 +3,6 @@ mqtt:
   port: 1883                # defaults to 1883
   devicename: wb103
   client_id: some_other_client
-update_interval: 10        # Wallbox polling interval in s
 modbus:
   port: '/dev/ttyAMA0'     # Serial port of Modbus interface
   bus_id: 1                # Modbus ID

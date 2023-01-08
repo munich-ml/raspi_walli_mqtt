@@ -66,13 +66,15 @@ if __name__ == "__main__":
             wb.task_queue.put_nowait(task)        
             
         else:                             # for entities within this app
-            entities = entities_interface.load()
-            entities[entity]["value"] = value
-            entities_interface.dump(entities)
             if entity == "polling_interval":
+                entities = entities_interface.load()
+                entities[entity]["value"] = value
+                entities_interface.dump(entities)
                 timer.update_interval(value)
-            after_write()
-    
+                after_write()
+            elif entity == "polling_request":
+                do_capture()
+
     
     def after_write(return_value=None):
         """Callback function executed after wallbox capture to process the return data.

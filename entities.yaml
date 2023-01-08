@@ -149,3 +149,8 @@ polling_interval:
   max: 3600                   # (optional) Maximum value (defaults to 99)
   step: 1                     # (optional) Step size (defaults to 1)
   value: 42                   # proprietary attribute used as initial value und value variable 
+polling_request:
+  type: button                # button = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/button  
+  name: Polling Request       # friendly name that shows up in Home Assitant GUI
+  icon: gesture-tap-button    # (optional) Define an MSI icon from https://materialdesignicons.com/
+  value: 0                    # proprietary dummy attribute 
