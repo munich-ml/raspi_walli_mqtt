@@ -75,8 +75,6 @@ power_kW:
   unit: kW
   state_class: measurement
   icon: flash-triangle 
-  min: 0
-  max: 11
   value: 0                    
 energy_pwr_on: 
   type: sensor
