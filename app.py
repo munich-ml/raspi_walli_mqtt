@@ -46,9 +46,15 @@ if __name__ == "__main__":
     def after_capture(data: dict):
         """Callback function executed after wallbox capture to process the return data.
         """
-        logging.info("after capture: " + str(data))
-        mqtt.set_states(data)
+        # load yaml entities (e.g. for polling_interval)
+        entities = {e: v["value"] for e, v in yaml_entities.load().items()}  
+        
+        # update yaml entities with the values from the Wallbox read
+        entities.update(data) 
+        
+        mqtt.set_states(entities)
         mqtt.publish_updates()
+        logging.info("after capture: " + str(entities))
         
     
     def do_write(entity, value, timeout=None):
@@ -70,16 +76,13 @@ if __name__ == "__main__":
 
 
     yaml_settings = YamlInterface(SETTINGS)
-    settings = yaml_settings.load()
-
-    entities = YamlInterface(ENTITIES).load()
+    yaml_entities = YamlInterface(ENTITIES)
     
-    mqtt = MqttDevice(entities=entities,
+    settings = yaml_settings.load()
+    mqtt = MqttDevice(entities=yaml_entities.load(),
                       on_message_callback=do_write,
                       **settings['mqtt'])    
-    
     wb = Wallbox(**settings["modbus"])
-    
     timer = CaptureTimer(settings["update_interval"], do_capture)
         
     try:
