@@ -41,10 +41,9 @@ if __name__ == "__main__":
 
     entities = YamlInterface(ENTITIES).load()
     
-    def do_write(entity, message, timeout=None):
-        logging.info(f"{entity}, {message}")
-        #mqtt.set_states({entity: message})
-        mqtt.publish_updates()  # send confirmation to homeassistant 
+    def do_write(entity, value, timeout=None):
+        task = {"func": "write", "kwargs": {"entity": entity, "value": value}, "callback": do_capture}
+        wb.task_queue.put_nowait(task)        
         
     
     mqtt = MqttDevice(hostname=settings['mqtt']['hostname'], 

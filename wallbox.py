@@ -118,6 +118,20 @@ class Wallbox(threading.Thread):
         return dct
         
         
+    def write(self, entity, value):
+        if entity == "modbus_watchdog_timeout":
+            adr, val = 257, int(value * 1000)
+        elif entity == "remote_lock":
+            adr, val = 259, value
+        elif entity == "I_max_cmd":
+            adr, val = 261, int(value * 10)
+        elif entity == "I_fail_safe":
+            adr, val = 262, int(value * 10)
+        else:
+            logging.error(f"Unknown entity {entity} with value {value}")
+        self._reg_write(adr, val)
+            
+        
     def _reg_read(self, input_regs: list, holding_regs: list) -> dict[str, list[tuple[str, int]]]:
         """Reads current data from the wallbox
 
@@ -148,7 +162,6 @@ class Wallbox(threading.Thread):
 
     def _reg_write(self, adr: str, val: int):
         self.mb.write_register(int(adr), int(val), unit=self.bus_id)       
-        return {}
     
 
     def exit(self):
