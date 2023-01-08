@@ -5,6 +5,6 @@ devicename: wb103
 client_id: some_other_client
 update_interval: 10        # Wallbox polling interval in s
 modbus:
-  PORT: '/dev/ttyAMA0'     # Serial port of Modbus interface
-  BUS_ID: 1                # Modbus ID
-  MAX_READ_ATTEMPTS: 8     # Max number of attempts for a Modbus read
+  port: '/dev/ttyAMA0'     # Serial port of Modbus interface
+  bus_id: 1                # Modbus ID
+  max_read_attempts: 8     # Max number of attempts for a Modbus read

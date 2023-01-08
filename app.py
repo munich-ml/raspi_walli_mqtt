@@ -62,9 +62,7 @@ if __name__ == "__main__":
                       entities=entities,
                       on_message_callback=do_write)    
     
-    wb = Wallbox(port=settings["modbus"]["PORT"],
-                 bus_id=settings["modbus"]["BUS_ID"],
-                 max_read_attempts=settings["modbus"]["MAX_READ_ATTEMPTS"])
+    wb = Wallbox(**settings["modbus"])
     
     
     def after_capture(data: dict):
