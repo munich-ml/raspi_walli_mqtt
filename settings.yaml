@@ -1,10 +1,10 @@
 mqtt:
   hostname: 192.168.178.63  # MQTT broker within home assistant
   port: 1883                # defaults to 1883
-  devicename: wb103
+  name: Walli
   manufacturer: Heidelberg
   model: Energy Control
-  client_id: some_other_client
+  client_id: walli
 modbus:
   port: '/dev/ttyAMA0'     # Serial port of Modbus interface
   bus_id: 1                # Modbus ID
