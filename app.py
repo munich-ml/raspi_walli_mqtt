@@ -83,9 +83,8 @@ if __name__ == "__main__":
         do_capture()
 
 
-    settings_interface = YamlInterface(SETTINGS)
     entities_interface = YamlInterface(ENTITIES)
-    
+    settings_interface = YamlInterface(SETTINGS)
     settings = settings_interface.load()
     mqtt = MqttDevice(entities=entities_interface.load(), on_message_callback=do_write,
                       **settings['mqtt'])    
