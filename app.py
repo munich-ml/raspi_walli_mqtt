@@ -57,7 +57,7 @@ if __name__ == "__main__":
         logging.debug(f"after capture: {entities}")
         
     
-    def do_write(entity, value, timeout=None):
+    def do_write(entity, value):
         """Puts a write task into the wallbox task queue. 
         """
         if entity in wb.WRITEABLE_REGS:   # for entities within the Wallbox
@@ -66,13 +66,13 @@ if __name__ == "__main__":
             wb.task_queue.put_nowait(task)        
             
         else:                             # for entities within this app
-            if entity == "polling_interval":
+            if entity == "polling_interval":   # periodic polling
                 entities = entities_interface.load()
                 entities[entity]["value"] = value
                 entities_interface.dump(entities)
                 timer.update_interval(value)
                 after_write()
-            elif entity == "polling_request":
+            elif entity == "polling_request":   # manual polling
                 do_capture()
 
     
