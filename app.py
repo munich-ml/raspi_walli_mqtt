@@ -87,29 +87,35 @@ if __name__ == "__main__":
         time.sleep(0.2)  # wait a little to allow the wallbox doing the changes
         do_capture()
 
-    try:
-        settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
-        entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
-        mqtt = MqttDevice(entities=entities_interface.load(), 
-                        secrets_path=os.path.join(wd, SECRETS), 
-                        on_message_callback=do_write,
-                        **settings['mqtt'])    
-        wb = Wallbox(**settings["modbus"])
-        timer = CaptureTimer(interval=entities_interface.load()["polling_interval"]["value"], 
-                            function=do_capture)
-            
-        try:
-            while True:
-                time.sleep(1)
-        
-        except KeyboardInterrupt:
-            pass
-        
-        wb.exit()
-        mqtt.exit()
-        timer.exit()
-        logging.info("exiting main")
+    settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
+    entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
     
-    except Exception as e:
-        logging.error(e)
+    while True:   # this endless loop helps starting the script at raspi boot, when network is not available
+        try:
+            mqtt = MqttDevice(entities=entities_interface.load(), 
+                            secrets_path=os.path.join(wd, SECRETS), 
+                            on_message_callback=do_write,
+                            **settings['mqtt'])    
+        except Exception as e:
+            logging.error(e)
+            time.sleep(5)
+        else:
+            break
+        
+    wb = Wallbox(**settings["modbus"])
+    timer = CaptureTimer(interval=entities_interface.load()["polling_interval"]["value"], 
+                        function=do_capture)
+        
+    try:
+        while True:
+            time.sleep(1)
+    
+    except KeyboardInterrupt:
+        pass
+    
+    wb.exit()
+    mqtt.exit()
+    timer.exit()
+    logging.info("exiting main")
+    
     
