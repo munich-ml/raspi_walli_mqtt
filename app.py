@@ -111,12 +111,12 @@ if __name__ == "__main__":
         while True:
             time.sleep(1)
     
-    except KeyboardInterrupt:
-        pass
+    except Exception as e:
+        logging.error(f"{e} in endless loop, exiting now")
     
     wb.exit()
     mqtt.exit()
     timer.exit()
-    logging.info("exiting main")
+    logging.info("exit")
     
     
