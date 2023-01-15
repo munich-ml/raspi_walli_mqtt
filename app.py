@@ -6,8 +6,10 @@ SETTINGS = 'settings.yaml'
 ENTITIES = 'entities.yaml'
 SECRETS = 'secrets.yaml'
 
+wd = os.path.dirname(__file__)
+log_path = os.path.join(wd, "logging.txt")
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
-                    handlers=[logging.FileHandler("logging.txt"), logging.StreamHandler(),],
+                    handlers=[logging.FileHandler(wd), logging.StreamHandler(),],
                     level=logging.INFO)
 
 class CaptureTimer:
@@ -85,7 +87,6 @@ if __name__ == "__main__":
         time.sleep(0.2)  # wait a little to allow the wallbox doing the changes
         do_capture()
 
-    wd = os.path.dirname(__file__)
     settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
     entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
     mqtt = MqttDevice(entities=entities_interface.load(), 
