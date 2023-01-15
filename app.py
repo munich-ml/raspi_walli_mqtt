@@ -90,15 +90,16 @@ if __name__ == "__main__":
     settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
     entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
     
-    while True:   # this endless loop helps starting the script at raspi boot, when network is not available
+    while True:  # this endless loop helps starting the script at raspi boot, when network is not available
         try:
             mqtt = MqttDevice(entities=entities_interface.load(), 
                             secrets_path=os.path.join(wd, SECRETS), 
                             on_message_callback=do_write,
                             **settings['mqtt'])    
         except Exception as e:
-            logging.error(e)
-            time.sleep(5)
+            RETRY_DELAY = 5
+            logging.error(f"{e}, trying to reconnect in {RETRY_DELAY} seconds,...")
+            time.sleep(RETRY_DELAY)
         else:
             break
         
