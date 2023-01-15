@@ -25,7 +25,7 @@ class YamlInterface:
     
     
 class MqttDevice:
-    def __init__(self, hostname, port, name, model, manufacturer, client_id, entities, on_message_callback=None):
+    def __init__(self, hostname, port, name, model, manufacturer, client_id, entities, secrets_path, on_message_callback=None):
         self.name = name    
         self.model = model 
         self.manufacturer = manufacturer
@@ -36,7 +36,7 @@ class MqttDevice:
         self.client._on_message = self._on_message
         self.client.will_set(f'homeassistant/sensor/{name}/availability', 'offline', retain=True)
 
-        mqtt_auth = YamlInterface(filename='secrets.yaml').load()['mqtt_auth']
+        mqtt_auth = YamlInterface(secrets_path).load()['mqtt_auth']
         self.client.username_pw_set(mqtt_auth['user'], mqtt_auth['password'])
         del mqtt_auth
 

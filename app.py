@@ -1,9 +1,10 @@
-import logging, math, threading, time
+import logging, math, os, threading, time
 from mqtt_device import MqttDevice, YamlInterface
 from wallbox import Wallbox
 
 SETTINGS = 'settings.yaml'
 ENTITIES = 'entities.yaml'
+SECRETS = 'secrets.yaml'
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     handlers=[logging.FileHandler("logging.txt"), logging.StreamHandler(),],
@@ -84,11 +85,12 @@ if __name__ == "__main__":
         time.sleep(0.2)  # wait a little to allow the wallbox doing the changes
         do_capture()
 
-
-    entities_interface = YamlInterface(ENTITIES)
-    settings_interface = YamlInterface(SETTINGS)
-    settings = settings_interface.load()
-    mqtt = MqttDevice(entities=entities_interface.load(), on_message_callback=do_write,
+    wd = os.path.dirname(__file__)
+    settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
+    entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
+    mqtt = MqttDevice(entities=entities_interface.load(), 
+                      secrets_path=os.path.join(wd, SECRETS), 
+                      on_message_callback=do_write,
                       **settings['mqtt'])    
     wb = Wallbox(**settings["modbus"])
     timer = CaptureTimer(interval=entities_interface.load()["polling_interval"]["value"], 
