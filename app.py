@@ -87,25 +87,29 @@ if __name__ == "__main__":
         time.sleep(0.2)  # wait a little to allow the wallbox doing the changes
         do_capture()
 
-    settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
-    entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
-    mqtt = MqttDevice(entities=entities_interface.load(), 
-                      secrets_path=os.path.join(wd, SECRETS), 
-                      on_message_callback=do_write,
-                      **settings['mqtt'])    
-    wb = Wallbox(**settings["modbus"])
-    timer = CaptureTimer(interval=entities_interface.load()["polling_interval"]["value"], 
-                         function=do_capture)
-        
     try:
-        while True:
-            time.sleep(1)
+        settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
+        entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
+        mqtt = MqttDevice(entities=entities_interface.load(), 
+                        secrets_path=os.path.join(wd, SECRETS), 
+                        on_message_callback=do_write,
+                        **settings['mqtt'])    
+        wb = Wallbox(**settings["modbus"])
+        timer = CaptureTimer(interval=entities_interface.load()["polling_interval"]["value"], 
+                            function=do_capture)
+            
+        try:
+            while True:
+                time.sleep(1)
+        
+        except KeyboardInterrupt:
+            pass
+        
+        wb.exit()
+        mqtt.exit()
+        timer.exit()
+        logging.info("exiting main")
     
-    except KeyboardInterrupt:
-        pass
-    
-    wb.exit()
-    mqtt.exit()
-    timer.exit()
-    logging.info("exiting main")
+    except Exception as e:
+        logging.error(e)
     
