@@ -6,6 +6,7 @@ SETTINGS = 'settings.yaml'
 ENTITIES = 'entities.yaml'
 
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
+                    handlers=[logging.FileHandler("logging.txt"), logging.StreamHandler(),],
                     level=logging.INFO)
 
 class CaptureTimer:
@@ -60,6 +61,7 @@ if __name__ == "__main__":
     def do_write(entity, value):
         """Puts a write task into the wallbox task queue. 
         """
+        logging.info(f"entity={entity}, value={value}")
         if entity in wb.WRITEABLE_REGS:   # for entities within the Wallbox
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}
