@@ -1,12 +1,12 @@
 # MQTT device entities definition file
 # Home Assistant will discover each item (e.g. temperature) as an entity
-charging_state: 
+charging_state:
   type: sensor
   name: Charging state
   state_class: measurement
-  icon: state-machine 
-  value: 0                    
-I_L1: 
+  icon: state-machine
+  value: 0
+I_L1:
   type: sensor                # sensor = data flow: MQTT device -> MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/sensor/
   name: L1 current            # friendly name that shows up in Home Assitant GUI
   device_class: current       # (optional) Avaliable options: https://developers.home-assistant.io/docs/core/entity/sensor/#available-device-classes 
@@ -14,101 +14,101 @@ I_L1:
   state_class: measurement    # (optional) Avaliable options: https://developers.home-assistant.io/docs/core/entity/sensor/#available-state-classes
   icon: current-ac            # (optional) Define an MSI icon from https://materialdesignicons.com/
   value: 0                    # proprietary attribute used as initial value und value variable
-I_L2: 
+I_L2:
   type: sensor
   name: L2 current
   device_class: current
   unit: A
   state_class: measurement
-  icon: current-ac 
-  value: 0                    
-I_L3: 
+  icon: current-ac
+  value: 0
+I_L3:
   type: sensor
   name: L3 current
   device_class: current
   unit: A
   state_class: measurement
-  icon: current-ac 
-  value: 0                    
-temperature: 
+  icon: current-ac
+  value: 0
+temperature:
   type: sensor
   name: wallbox PCB temperature
   device_class: temperature
   unit: °C
   state_class: measurement
-  icon: thermometer 
-  value: 0                    
-V_L1: 
+  icon: thermometer
+  value: 0
+V_L1:
   type: sensor
   name: L1 voltage
   device_class: voltage
   unit: V
   state_class: measurement
-  icon: sine-wave 
-  value: 0                    
-V_L2: 
+  icon: sine-wave
+  value: 0
+V_L2:
   type: sensor
   name: L2 voltage
   device_class: voltage
   unit: V
   state_class: measurement
-  icon: sine-wave 
-  value: 0                    
-V_L3: 
+  icon: sine-wave
+  value: 0
+V_L3:
   type: sensor
   name: L3 voltage
   device_class: voltage
   unit: V
   state_class: measurement
-  icon: sine-wave 
-  value: 0                    
-extern_lock_state: 
+  icon: sine-wave
+  value: 0
+extern_lock_state:
   type: sensor
   name: External lock state
   state_class: measurement
-  icon: state-machine 
-  value: 0                    
-power_kW: 
+  icon: state-machine
+  value: 0
+power_kW:
   type: sensor
   name: Charging power
   device_class: power
   unit: kW
   state_class: measurement
-  icon: flash-triangle 
-  value: 0                    
-energy_pwr_on: 
+  icon: flash-triangle
+  value: 0
+energy_pwr_on:
   type: sensor
   name: Energy since powerup
   device_class: power
   unit: kWh
   state_class: total
-  icon: battery-charging 
-  value: 0                    
-energy_kWh: 
+  icon: battery-charging
+  value: 0
+energy_kWh:
   type: sensor
   name: Energy total
   device_class: power
   unit: kWh
   state_class: total
   icon: battery-charging
-  value: 0                    
-I_max_cfg: 
+  value: 0
+I_max_cfg:
   type: sensor
   name: Max current HW config
   device_class: current
   unit: A
   state_class: measurement
-  icon: current-ac 
-  value: 0                    
-I_min_cfg: 
+  icon: current-ac
+  value: 0
+I_min_cfg:
   type: sensor
   name: Min current HW config
   device_class: current
   unit: A
   state_class: measurement
-  icon: current-ac 
-  value: 0                               
-modbus_watchdog_timeout: 
+  icon: current-ac
+  value: 0
+modbus_watchdog_timeout:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
   name: ModBus watchdog timeout   # friendly name that shows up in Home Assitant GUI
   unit: s                     # (optional) Defines the unit_of_measurement in Home Assistant
@@ -140,7 +140,7 @@ I_fail_safe:
   max: 16                     # (optional) Maximum value (defaults to 99)
   step: 0.1                   # (optional) Step size (defaults to 1)
   value: 0                    # proprietary attribute used as initial value und value variable                
-polling_interval: 
+polling_interval:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
   name: Polling interval      # friendly name that shows up in Home Assitant GUI
   unit: s                     # (optional) Defines the unit_of_measurement in Home Assistant
@@ -148,7 +148,7 @@ polling_interval:
   min: 1                      # (optional) Minimum value (defaults to 1)
   max: 3600                   # (optional) Maximum value (defaults to 99)
   step: 1                     # (optional) Step size (defaults to 1)
-  value: 600                  # proprietary attribute used as initial value und value variable 
+  value: 60                   # proprietary attribute used as initial value und value variable 
 polling_request:
   type: button                # button = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/button  
   name: Polling Request       # friendly name that shows up in Home Assitant GUI
