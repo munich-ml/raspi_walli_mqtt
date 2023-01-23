@@ -115,6 +115,11 @@ class Wallbox(threading.Thread):
             "I_max_cmd": raw["max_I_cmd"] / 10.,
             "I_fail_safe": raw["FailSafe_I"] / 10., 
         }
+        s = ""
+        for name in ("remote_enable", "I_max_cmd", "I_fail_safe"):
+            s += name + "=" + str(dct[name] + ", ")
+        logging.info(s)
+            
         return dct
         
     WRITEABLE_REGS = {"modbus_watchdog_timeout": (257, "int(value * 1000)"),
@@ -158,6 +163,7 @@ class Wallbox(threading.Thread):
     
 
     def _reg_write(self, adr: str, val: int):
+        logging.info(f"Writing {adr=}, {val=}")
         self.mb.write_register(int(adr), int(val), unit=self.bus_id)  
         return {}     
     
