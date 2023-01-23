@@ -117,7 +117,7 @@ class Wallbox(threading.Thread):
         }
         s = ""
         for name in ("remote_enable", "I_max_cmd", "I_fail_safe"):
-            s += name + "=" + str(dct[name] + ", ")
+            s += name + "=" + str(dct[name]) + ", "
         logging.info(s)
             
         return dct
