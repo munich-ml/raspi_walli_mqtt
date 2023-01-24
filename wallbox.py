@@ -165,7 +165,7 @@ class Wallbox(threading.Thread):
     
 
     def _reg_write(self, adr: str, val: int):
-        logging.info(f"Writing {adr=}, {val=}")
+        #logging.info(f"Writing {adr=}, {val=}")
         self.mb.write_register(int(adr), int(val), unit=self.bus_id)  
         return {}     
     
