@@ -71,6 +71,8 @@ if __name__ == "__main__":
         if entity in wb.WRITEABLE_REGS:   # for entities within the Wallbox
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}
+            if entity in ("standby_enable", "standby_disable"):
+                task.pop("callback")   # no subsequent capture for write only entities
             if wb.task_queue.full():
                 logging.warning(f"task_queue is full, skipping {task=}!")  
             else:      
