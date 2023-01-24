@@ -123,6 +123,8 @@ class Wallbox(threading.Thread):
         return dct
         
     WRITEABLE_REGS = {"modbus_watchdog_timeout": (257, "int(value * 1000)"),
+                      "standby_enable":          (258, "int(0)"),
+                      "standby_disable":         (258, "int(4)"),
                       "remote_enable":           (259, "{'ON': 1, 'OFF': 0}[value]"),
                       "I_max_cmd":               (261, "int(value * 10)"),
                       "I_fail_safe":             (262, "int(value * 10)")}    
