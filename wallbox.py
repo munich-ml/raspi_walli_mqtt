@@ -45,10 +45,10 @@ class Wallbox(threading.Thread):
                 #    continue
                 
                 if "callback" in task:
-                    try: 
-                        task["callback"](return_dct)
-                    except Exception as e:
-                        logging.error(e)
+                    #try: 
+                    task["callback"](return_dct)
+                    #except Exception as e:
+                    #    logging.error(e)
                     
         logging.info("Wallbox thread ist exiting")
         
