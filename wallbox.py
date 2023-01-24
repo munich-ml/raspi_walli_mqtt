@@ -41,8 +41,7 @@ class Wallbox(threading.Thread):
                 try:
                     return_dct = func(**kwargs)
                 except Exception as e:
-                    logging.error(f"task {task} caused '{e}'")
-                    task["callback"]({"rc": f"Exception during {task}"})
+                    logging.error(f"{task=} caused Expeption='{e}'")
                     continue
                 
                 if "callback" in task:
@@ -115,9 +114,10 @@ class Wallbox(threading.Thread):
             "I_max_cmd": raw["max_I_cmd"] / 10.,
             "I_fail_safe": raw["FailSafe_I"] / 10., 
         }
-        s = ""
+
+        s = f"qsize={self.task_queue.qsize()}"
         for name in ("remote_enable", "I_max_cmd", "I_fail_safe"):
-            s += name + "=" + str(dct[name]) + ", "
+            s += f", {name}={dct[name]}"
         logging.info(s)
             
         return dct

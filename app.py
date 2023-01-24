@@ -44,7 +44,10 @@ if __name__ == "__main__":
         """Puts a capture task into the wallbox task queue. 
         """
         task = {"func": "capture", "callback": after_capture}
-        wb.task_queue.put_nowait(task)
+        if wb.task_queue.full():
+            logging.warning(f"task_queue is full, skipping {task=}!")  
+        else:      
+            wb.task_queue.put_nowait(task)
 
 
     def after_capture(data: dict):
@@ -68,7 +71,10 @@ if __name__ == "__main__":
         if entity in wb.WRITEABLE_REGS:   # for entities within the Wallbox
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}
-            wb.task_queue.put_nowait(task)        
+            if wb.task_queue.full():
+                logging.warning(f"task_queue is full, skipping {task=}!")  
+            else:      
+                wb.task_queue.put_nowait(task)
             
         else:                             # for entities within this app
             if entity == "polling_interval":   # periodic polling
