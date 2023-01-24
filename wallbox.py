@@ -38,11 +38,11 @@ class Wallbox(threading.Thread):
                 else:
                     kwargs = {}
                 
-                try:
-                    return_dct = func(**kwargs)
-                except Exception as e:
-                    logging.error(f"{task=} caused Expeption='{e}'")
-                    continue
+                #try:
+                return_dct = func(**kwargs)
+                #except Exception as e:
+                #    logging.error(f"{task=} caused Expeption='{e}'")
+                #    continue
                 
                 if "callback" in task:
                     try: 
