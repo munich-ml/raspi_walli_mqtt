@@ -83,7 +83,13 @@ class Wallbox(threading.Thread):
                 if r.isError():
                     read_attempts += 1
                     if read_attempts > self.max_read_attempts:
-                        raise ModbusReadError
+                        
+                        s = 'Modbus read error occured! dir(r)='
+                        for method in dir(r):
+                            if not method.startswith('__'):
+                                s += f'{method}, '
+                        logging.error(s[:-2])
+                        return {}
                 else:
                     regs.extend(r.registers)
                     break
@@ -133,7 +139,13 @@ class Wallbox(threading.Thread):
         """Convert Home Assitant entity to Modbus register and do the write.
         """
         adr, equasion = self.WRITEABLE_REGS[entity]
-        self._reg_write(adr, eval(equasion))
+        r = self._reg_write(adr, eval(equasion))
+                                
+        s = 'Modbus write with dir(r)='
+        for method in dir(r):
+            if not method.startswith('__'):
+                s += f'{method}, '
+        logging.info(s[:-2])
             
         
     def _reg_read(self, input_regs: list, holding_regs: list) -> dict[str, list[tuple[str, int]]]:

@@ -53,15 +53,16 @@ if __name__ == "__main__":
     def after_capture(data: dict):
         """Callback function executed after wallbox capture to process the return data.
         """
-        # load yaml entities (e.g. for polling_interval)
-        entities = {e: v["value"] for e, v in entities_interface.load().items()}  
-        
-        # update yaml entities with the values from the Wallbox read
-        entities.update(data) 
-        
-        mqtt.set_states(entities)
-        mqtt.publish_updates()
-        logging.debug(f"after capture: {entities}")
+        if data:
+            # load yaml entities (e.g. for polling_interval)
+            entities = {e: v["value"] for e, v in entities_interface.load().items()}  
+            
+            # update yaml entities with the values from the Wallbox read
+            entities.update(data) 
+            
+            mqtt.set_states(entities)
+            mqtt.publish_updates()
+            logging.debug(f"after capture: {entities}")
         
     
     def do_write(entity, value):
