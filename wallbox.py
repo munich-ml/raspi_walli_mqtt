@@ -139,12 +139,9 @@ class Wallbox(threading.Thread):
         """Convert Home Assitant entity to Modbus register and do the write.
         """
         adr, equasion = self.WRITEABLE_REGS[entity]
-        r = self._reg_write(adr, eval(equasion))
+        self._reg_write(adr, eval(equasion))
                                 
-        s = f'Modbus write return: {r.items()=}'
-        logging.info(s)
-            
-        
+                                        
     def _reg_read(self, input_regs: list, holding_regs: list) -> dict[str, list[tuple[str, int]]]:
         """Reads current data from the wallbox
 
@@ -175,7 +172,11 @@ class Wallbox(threading.Thread):
 
     def _reg_write(self, adr: str, val: int):
         #logging.info(f"Writing {adr=}, {val=}")
-        self.mb.write_register(int(adr), int(val), unit=self.bus_id)  
+        r = self.mb.write_register(int(adr), int(val), unit=self.bus_id)  
+        s = f'Modbus write return: {dir(r)=}'
+        logging.info(s)
+            
+
         return {}     
     
 
