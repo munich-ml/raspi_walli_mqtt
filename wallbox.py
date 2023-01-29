@@ -141,11 +141,8 @@ class Wallbox(threading.Thread):
         adr, equasion = self.WRITEABLE_REGS[entity]
         r = self._reg_write(adr, eval(equasion))
                                 
-        s = 'Modbus write with dir(r)='
-        for method in dir(r):
-            if not method.startswith('__'):
-                s += f'{method}, '
-        logging.info(s[:-2])
+        s = f'Modbus write return: {r.items()=}'
+        logging.info(s)
             
         
     def _reg_read(self, input_regs: list, holding_regs: list) -> dict[str, list[tuple[str, int]]]:
