@@ -173,9 +173,8 @@ class Wallbox(threading.Thread):
     def _reg_write(self, adr: str, val: int):
         #logging.info(f"Writing {adr=}, {val=}")
         r = self.mb.write_register(int(adr), int(val), unit=self.bus_id)  
-        s = f'Modbus write return: {dir(r)=}'
-        logging.info(s)
-            
+        if r.isError():
+            logging.error(f"Error during Modbus write on {adr=}, {val=}")    
 
         return {}     
     
