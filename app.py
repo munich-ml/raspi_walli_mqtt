@@ -62,13 +62,13 @@ if __name__ == "__main__":
             
             mqtt.set_states(entities)
             mqtt.publish_updates()
-            logging.debug(f"after capture: {entities}")
+            logging.info(f"after capture: {entities}")
         
     
     def do_write(entity, value):
         """Puts a write task into the wallbox task queue. 
         """
-        logging.info(f"entity={entity}, value={value}")
+        logging.debug(f"entity={entity}, value={value}")
         if entity in wb.WRITEABLE_REGS:   # for entities within the Wallbox
             task = {"func": "write", "callback": after_write, 
                     "kwargs": {"entity": entity, "value": value}}

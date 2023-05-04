@@ -124,7 +124,7 @@ class Wallbox(threading.Thread):
         s = f"qsize={self.task_queue.qsize()}"
         for name in ("remote_enable", "I_max_cmd", "I_fail_safe"):
             s += f", {name}={dct[name]}"
-        logging.info(s)
+        logging.debug(s)
             
         return dct
         
