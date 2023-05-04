@@ -20,3 +20,7 @@ The __`app.py`__ periodically reads the sensors (wallbox registers) and pubishes
 `settings`, `enities` and `secrets` are taken from the respective `yaml`-files.
 
 ![imgs/block_diagram.drawio.png](imgs/block_diagram.drawio.png)
+
+## ToDos
+- Standby function
+- Capture all, capture essential
