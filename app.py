@@ -10,7 +10,7 @@ wd = os.path.dirname(__file__)
 log_path = os.path.join(wd, "logging.txt")
 logging.basicConfig(format='%(asctime)s | %(levelname)-8s | %(funcName)s() %(filename)s line=%(lineno)s | %(message)s',
                     handlers=[logging.FileHandler(log_path), logging.StreamHandler(),],
-                    level=logging.INFO)
+                    level=logging.WARNING)
 
 class CaptureTimer:
     def __init__(self, interval, function):
@@ -45,7 +45,8 @@ if __name__ == "__main__":
         """
         task = {"func": "capture", "callback": after_capture}
         if wb.task_queue.full():
-            logging.warning(f"task_queue is full, skipping {task=}!")  
+            logging.error(f"task_queue is full, skipping {task=}!")
+            exit_and_reboot()  
         else:      
             wb.task_queue.put_nowait(task)
 
@@ -75,7 +76,8 @@ if __name__ == "__main__":
             if entity in ("standby_enable", "standby_disable"):
                 task.pop("callback")   # no subsequent capture for write only entities
             if wb.task_queue.full():
-                logging.warning(f"task_queue is full, skipping {task=}!")  
+                logging.error(f"task_queue is full, skipping {task=}!")
+                exit_and_reboot()  
             else:      
                 wb.task_queue.put_nowait(task)
             
@@ -95,6 +97,22 @@ if __name__ == "__main__":
         """
         time.sleep(0.2)  # wait a little to allow the wallbox doing the changes
         do_capture()
+        
+    
+    def exit_and_reboot():
+        try:
+            mqtt.exit()
+        except Exception as exception:
+            logging.error(f"{exception=} occured during mqtt.exit()!")
+            
+        try:
+            wb.exit()
+        except Exception as exception:
+            logging.error(f"{exception=} occured during wb.exit()!")
+            
+        logging.error("Wallbox exited, rebooting now..")    
+        os.system("sudo reboot now")
+    
 
     settings = YamlInterface(os.path.join(wd, SETTINGS)).load()
     entities_interface = YamlInterface(os.path.join(wd, ENTITIES))
