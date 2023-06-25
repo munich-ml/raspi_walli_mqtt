@@ -148,7 +148,7 @@ polling_interval:
   min: 1                      # (optional) Minimum value (defaults to 1)
   max: 3600                   # (optional) Maximum value (defaults to 99)
   step: 1                     # (optional) Step size (defaults to 1)
-  value: 600                  # proprietary attribute used as initial value und value variable 
+  value: 188                  # proprietary attribute used as initial value und value variable 
 polling_request:
   type: button                # button = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/button  
   name: Polling Request       # friendly name that shows up in Home Assitant GUI
