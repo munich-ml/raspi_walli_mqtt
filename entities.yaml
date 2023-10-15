@@ -79,7 +79,7 @@ power_kW:
 energy_pwr_on:
   type: sensor
   name: Energy since powerup
-  device_class: power
+  device_class: energy
   unit: kWh
   state_class: total
   icon: battery-charging
@@ -87,7 +87,7 @@ energy_pwr_on:
 energy_kWh:
   type: sensor
   name: Energy total
-  device_class: power
+  device_class: energy
   unit: kWh
   state_class: total
   icon: battery-charging
