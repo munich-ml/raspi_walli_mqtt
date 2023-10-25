@@ -70,10 +70,16 @@ class MqttDevice:
         return {k: v["value"] for k, v in self._entities.items()}
     
     
-    def set_states(self, states_dict):
-        for entity, value in states_dict.items():
+    def set_states(self, states: dict):
+        """Set states of enities
+
+        Args:
+            states (dict): Enity_id keys and states values
+        """
+        for entity, value in states.items():
             if entity in self._entities:
                 self._entities[entity]["value"] = value
+            
             
     def _make_config_message(self, entity: str, attr: dict) -> tuple:
         """Creates MQTT config message (consiting of topic and payload) 
