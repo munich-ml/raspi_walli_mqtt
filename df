@@ -1,0 +1,28 @@
+[1mdiff --git a/logging.txt b/logging.txt[m
+[1mindex fc1a0eb..b4faeee 100644[m
+[1m--- a/logging.txt[m
+[1m+++ b/logging.txt[m
+[36m@@ -123,3 +123,23 @@[m
+ 2023-10-08 13:24:50,678 | ERROR    | <module>() app.py line=128 | [Errno 111] Connection refused, trying to reconnect in 5 seconds,...[m
+ 2023-10-15 10:54:00,573 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+ 2023-10-15 10:54:05,752 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-21 23:17:08,267 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-21 23:17:13,452 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-21 23:17:18,634 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-21 23:17:23,848 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-23 06:02:10,003 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:02:40,034 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:27:10,020 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:27:20,035 | ERROR    | _reg_write() wallbox.py line=177 | Error during Modbus write on adr=258, val=4[m
+[32m+[m[32m2023-10-23 06:29:40,017 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:31:40,013 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:33:40,013 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:34:34,424 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-23 06:34:39,636 | ERROR    | <module>() app.py line=128 | [Errno 101] Network is unreachable, trying to reconnect in 5 seconds,...[m
+[32m+[m[32m2023-10-23 06:37:10,021 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:53:40,016 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-23 06:56:10,015 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-24 09:42:10,019 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-24 09:46:40,018 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-24 09:48:40,008 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
+[32m+[m[32m2023-10-24 09:49:40,012 | ERROR    | capture() wallbox.py line=91 | Modbus read error occured! dir(r)=args, fcode, isError, message, string, with_traceback[m
