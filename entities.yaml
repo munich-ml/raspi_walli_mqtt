@@ -130,6 +130,7 @@ I_max_cmd:
   min: 0                      # (optional) Minimum value (defaults to 1)
   max: 16                     # (optional) Maximum value (defaults to 99)
   step: 0.1                   # (optional) Step size (defaults to 1)
+  mode: box                   # (optional) The number can be displayed in the UI. Can be set as "box" or "slider". Default is "auto"
   value: 0                    # proprietary attribute used as initial value und value variable 
 I_fail_safe:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/
@@ -139,6 +140,7 @@ I_fail_safe:
   min: 0                      # (optional) Minimum value (defaults to 1)
   max: 16                     # (optional) Maximum value (defaults to 99)
   step: 0.1                   # (optional) Step size (defaults to 1)
+  mode: box                   # (optional) The number can be displayed in the UI. Can be set as "box" or "slider". Default is "auto"
   value: 0                    # proprietary attribute used as initial value und value variable                
 polling_interval:
   type: number                # number = data flow: MQTT device <- MQTT broker. Docu: https://developers.home-assistant.io/docs/core/entity/number/

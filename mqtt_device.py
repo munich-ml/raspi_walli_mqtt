@@ -94,6 +94,7 @@ class MqttDevice:
         payload += f'"min":"{attr["min"]}",' if 'min' in attr else ''
         payload += f'"max":"{attr["max"]}",' if 'max' in attr else ''
         payload += f'"step":"{attr["step"]}",' if 'step' in attr else ''    
+        payload += f'"mode":"{attr["mode"]}",' if 'mode' in attr else ''    
         payload += f'"device":{{"identifiers":["{self.name}"],"name":"{self.name}","model":"{self.model}", "manufacturer":"{self.manufacturer}"}},'
         payload += f'"icon":"mdi:{attr["icon"]}"' if 'icon' in attr else ''
         payload += '}' 
