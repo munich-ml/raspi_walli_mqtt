@@ -9,7 +9,7 @@ The number and type of MQTT entities is configurable with a `entities.yaml` file
 - [__`switch`__](https://developers.home-assistant.io/docs/core/entity/switch) such as a power switch. The data flow is identical to the number type, but with boolean content.
 
 # Simple example application _Temperature controller_
-The [example_temp_controller.py](example_temp_controller.py) (together with the [entities_temp_controller.yaml](entities_temp_controller.yaml)) is a simple temperature controller application using one entity of each available type. Once started and discoverey by Home Assistant, it looks like this:
+The [example_temp_controller.py](example_temp_controller.py) (together with the [entities_temp_controller.yaml](entities_temp_controller.yaml)) is a simple temperature controller application using one entity of each available type. Once started and discovered by Home Assistant, it looks like this:
 
 ![imgs/tc_ui.png](../imgs/tc_ui.png)
 
